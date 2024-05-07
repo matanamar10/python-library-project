@@ -14,6 +14,8 @@ class Library:
         self.bills = {}
 
     # Function to export all the library data to xlsx file
+    """ The function get the library object """
+
     def export_to_csv(self):
         try:
             # Write data for Books
@@ -56,6 +58,8 @@ class Library:
         print(f"You are in: \n {self.name} library")
 
     # This functions allow us to add one or more new none-exists books to the library system
+    '''The function get list of books as parameter'''
+
     def add_new_books_to_the_library(self, new_books):
         new_books_to_add = convert_to_list(new_books)
         try:
@@ -79,6 +83,10 @@ class Library:
             print(f"Add book failed: {e}")
 
     # This function adds new students or teachers by provided type - to the library system.
+    '''The function get as parameter string of patron type - Student or Teacher 
+    also the function got list of patrons. 
+    '''
+
     def add_new_patron_to_the_library(self, patron_type, patrons):
         # The convert_to_list method is giving the user the option to mention either one or more new books to add.
         patrons = convert_to_list(patrons)
