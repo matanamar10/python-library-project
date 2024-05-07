@@ -5,18 +5,21 @@
 This Library Management System is designed to manage books, patrons (students and teachers), and borrowing activities within a library. It offers a complete suite of functionalities including adding and removing books and patrons, borrowing and returning books, and exporting library data to CSV files. This system aims to streamline the library operations and improve the management of library resources.
 
 # Features
-Manage Books: Add, remove, and search for books using ISBN, title, or author.
-Manage Patrons: Add or remove students and teachers, and manage their details.
-Borrow and Return Books: Handle the borrowing and returning processes of books, including due date management and overdue fine calculations.
-Data Export: Export books, students, teachers, and billing information to CSV files for record-keeping.
-Bill Management: Calculate and update bills for borrowed books, especially when they are overdue.
-Installation
-Clone the Repository:
+# Manage Books:  
+Add, remove, and search for books using ISBN, title, or author.
+# Manage Patrons: 
+* Add or remove students and teachers, and manage their details.
+* Borrow and Return Books: Handle the borrowing and returning processes of books, including due date management and overdue fine calculations.
+* Data Export: Export books, students, teachers, and billing information to CSV files for record-keeping.
+* Bill Management: Calculate and update bills for borrowed books, especially when they are overdue.
+  
+# Installation
+# Clone the Repository:
 bash
-Copy code
+# Copy code
 git clone https://github.com/matanamar10/python-library-project.git
 cd python-library-project
-Install Dependencies:
+# Install Dependencies:
 Ensure that Python 3.10 is installed on your system. You can download it from python.org.
 Setup Environment:
 It's recommended to create a virtual environment for Python projects.
@@ -25,7 +28,7 @@ Copy code
 python -m venv venv
 source venv/bin/activate  # On Windows use `venv\Scripts\activate`
 Usage
-Starting the Library System
+# Starting the Library System
 You can start interacting with the library system by creating an instance of the Library class:
 
 python
@@ -55,7 +58,7 @@ lib.add_new_patron_to_the_library('Student', new_student)
 
 new_teacher = Teacher("Jane Doe", "000000002")
 lib.add_new_patron_to_the_library('Teacher', new_teacher)
-Borrowing a Book
+# Borrowing a Book
 To borrow a book:
 
 python
