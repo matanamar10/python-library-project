@@ -15,19 +15,13 @@ Add, remove, and search for books using ISBN, title, or author.
   
 # Installation
 # Clone the Repository:
-bash
-# Copy code
-git clone https://github.com/matanamar10/python-library-project.git
-cd python-library-project
+* Copy code:
+  git clone https://github.com/matanamar10/python-library-project.git
+  cd python-library-project
 # Install Dependencies:
 Ensure that Python 3.10 is installed on your system. You can download it from python.org.
 Setup Environment:
 It's recommended to create a virtual environment for Python projects.
-bash
-Copy code
-python -m venv venv
-source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-Usage
 # Starting the Library System
 You can start interacting with the library system by creating an instance of the Library class:
 
