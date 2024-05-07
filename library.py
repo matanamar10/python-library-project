@@ -11,7 +11,6 @@ class Library:
         self.teachers = {}
         self.students = {}
         self.name = name
-        self.last_exported_data = None  # Store the last exported data
         self.bills = {}
 
     # Function to export all the library data to xlsx file
