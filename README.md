@@ -24,11 +24,6 @@ Setup Environment:
 It's recommended to create a virtual environment for Python projects.
 # Starting the Library System
 You can start interacting with the library system by creating an instance of the Library class:
-
-python
-Copy code
-from library import Library
-
 # Create a library instance
 lib = Library("Central Library")
 Adding a Book
