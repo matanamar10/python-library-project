@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from book import Book
 
 
+# The Student class inherit from Patron class , and manage all the students in the library.
 class Student(Patron):
     def __init__(self, name, student_id, age):
         super().__init__(name, student_id)

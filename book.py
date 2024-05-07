@@ -1,7 +1,9 @@
 # book.py
+# The book class is represent and manage all the books in the library.
 from utils import contain_non_letters
 
 
+# For each book we want to know about those necessary attributes
 class Book:
     def __init__(self, title, author, isbn):
         self.is_borrowed = False
@@ -12,6 +14,7 @@ class Book:
         self.due_date = None
         self.owner_id = None
 
+    # This function Verified the details of books when user provide them.
     def verify_book_details(self):
         try:
             # Check if ISBN has exactly 9 digits

@@ -1,7 +1,6 @@
 # library.py
 from utils import convert_to_list
 from utils import is_library_element_exists
-from utils import add_to_dict
 from datetime import datetime, timedelta
 import csv
 
@@ -12,7 +11,6 @@ class Library:
         self.teachers = {}
         self.students = {}
         self.name = name
-        self.excel_file_path = "library_data.xlsx"  # Path to Excel file
         self.last_exported_data = None  # Store the last exported data
         self.bills = {}
 
@@ -195,7 +193,7 @@ class Library:
                         f"The book {book.title} is returned to the library by student {student.name} - back to business!")
                 else:
                     raise ValueError(
-                        f"The book {book.title} cannot be returned becasue student {student.patron_id} got bills!")
+                        f"The book {book.title} cannot be returned because student {student.patron_id} got bills!")
             else:
                 raise ValueError(f"The book is {book} isn't borrowed yet or it does not belongs to any student")
         except ValueError as v:

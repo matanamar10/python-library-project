@@ -2,6 +2,7 @@
 from utils import contain_non_letters
 
 
+# The patron class is an abstract class. Student and Teacher class going to inherit from this one.
 class Patron:
     def __init__(self, name, patron_id):
         self.name = name
