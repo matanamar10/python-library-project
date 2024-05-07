@@ -40,7 +40,7 @@ To add a student or teacher to the library:
 
 python
 Copy code
-from patron import Student, Teacher
+from patron import Student, Teacher  
 
 new_student = Student("John Doe", "000000001", 20)
 lib.add_new_patron_to_the_library('Student', new_student)
