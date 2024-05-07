@@ -58,7 +58,7 @@ class Library:
         print(f"You are in: \n {self.name} library")
 
     # This functions allow us to add one or more new none-exists books to the library system
-    '''The function get list of books as parameter'''
+    """ The function get list of books as parameter """
 
     def add_new_books_to_the_library(self, new_books):
         new_books_to_add = convert_to_list(new_books)
@@ -83,9 +83,9 @@ class Library:
             print(f"Add book failed: {e}")
 
     # This function adds new students or teachers by provided type - to the library system.
-    '''The function get as parameter string of patron type - Student or Teacher 
+    """ The function get as parameter string of patron type - Student or Teacher 
     also the function got list of patrons. 
-    '''
+    """
 
     def add_new_patron_to_the_library(self, patron_type, patrons):
         # The convert_to_list method is giving the user the option to mention either one or more new books to add.
@@ -125,6 +125,10 @@ class Library:
             print(f"Patron addition action failed due to errors: {t}")
 
     # This function will remove existing patrons , students or teachers - from the library
+    """ The function gets as a parameter the patron type as String - Student or Teacher
+     , and list of patrons to remove
+    """
+
     def remove_patrons_from_the_library(self, patron_type, patrons):
         patrons = convert_to_list(patrons)
         try:
@@ -156,6 +160,8 @@ class Library:
 
     # This function will make a book borrowed - it will add a book to a student , and manipulate the book fields.
     # For example: The is_borrowed field will become "True".
+    """The function get a book object to borrow and student id to associate to the book"""
+
     def borrow_a_book(self, book, student_id):
         # Verifying the student and book details
         try:
@@ -166,9 +172,9 @@ class Library:
                     # Assign the book to the student - adding the book to the student books dict.
                     student.add_book_to_student(book=book)
                     # Edit book fields to make him borrowed.
-                    book.is_borrowed = True
-                    book.borrowed_date = datetime.now()
-                    book.due_date = book.borrowed_date + timedelta(days=14)
+                    book.is_borrowed = True  # The book is now borrowed
+                    book.borrowed_date = datetime.now()  # The day borrow start
+                    book.due_date = book.borrowed_date + timedelta(days=14)  # 14 days - time to return the book.
                     book.owner_id = student_id
                     self.update_excel_file()
                     print(f"book borrowed successfully")
@@ -180,6 +186,8 @@ class Library:
             print(f"borrowing action failed due to errors: {e}")
 
     # This function is allow to users return a borrowed book.
+    """ The function get book object and student id string - and return the book to the library"""
+
     def return_a_book(self, book, student_id):
         # Verify the book&students details and check if for sure the book is borrowed at all.
         try:
@@ -187,12 +195,12 @@ class Library:
                 student = self.students[student_id]
                 print(student.patron_id)
                 # Check for student bills to pay - if exists - cannot return the item
-                self.update_bills()
+                self.update_bills()  # Check for bills
                 if student_id not in self.bills or self.bills[student_id] == 0:
                     # Unassociated book from the student books dict and make him not borrowed
                     student.remove_book_from_student(book)
                     # Manipulate the book fields.
-                    book.is_borrowed = False
+                    book.is_borrowed = False  # The book is not borrowed anymore.
                     book.borrowed_date = None
                     book.due_date = None
                     self.update_excel_file()
@@ -207,10 +215,12 @@ class Library:
             print(f"The returning a book action failed due to error: {v}")
 
     # Function to filter on the library books and give the user to search book by isbn , authors or titles.
+    """ The function get strings to filter with and trying to find books with any one of them"""
+
     def search_books(self, book_title=None, book_author=None, book_isbn=None):
         # The results list is a list where all the filter results will be saved
         results = []
-        for book_isbn, book in self.books.items():
+        for book in self.books.values():
             # The filtering by the user-provided option (titles , authors or ISBNs)
             if (book_title is None or book.title in book_title) or \
                     (book_author is None or book.author in book_author) or \
@@ -221,7 +231,11 @@ class Library:
             print(result)
         return results
 
+    """The function return a results list which contain all the results of the function"""
+
     # Function that run every day & when customer come to return a book and check bills to pay on borrowed books.
+    """The function iterate over the library students dictionary and update in the bills dictionary if needed"""
+
     def update_bills(self):
         for student_id, student in self.students.items():
             # The calculate bill function used to calculate the exact bill of each student on each book
@@ -231,22 +245,29 @@ class Library:
                 print(f"The student {student.name} has now a bill of {bill}")
 
     # Function to delete existing books from the library
+    """The function get book ISBN and if exists ' remove him from the library"""
+
     def remove_book_from_the_library(self, book_isbn):
         try:
             # Check if the book isbn which provided by user is it exist in the books dictionary
             if book_isbn in self.books.keys():
                 book_title = self.books[book_isbn].title
-                # Remove the book from the library system
-                del self.books[book_isbn]
-                print(f"The book {book_title} is removed from the library")
-                self.update_excel_file()
-                # Return True if succeed , False if it doesn't
+                if not self.books[book_isbn].is_borrowed:
+                    del self.books[book_isbn]
+                    print(f"The book {book_title} is removed from the library")
+                    self.update_excel_file()
+                else:
+                    raise ValueError(f"The book with isbn {book_isbn} is borrowed and cant be removed!")
             else:
                 raise ValueError(f"the book with isbn {book_isbn} is already not in the library")
         except ValueError as e:
             print(f"The book deletion failed due to this error: {e}")
 
     # Assign students to specific teacher - Add students to the teachers students dictionary.
+    """ The function got teacher-id as string and students list to assign to her.
+    The function add elements to the students dictionary of this teacher
+    """
+
     def add_students_to_a_teacher(self, teacher_id, students):
         # Check if teacher_id is already exist
         try:

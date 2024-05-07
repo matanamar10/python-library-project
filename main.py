@@ -24,5 +24,3 @@ my_library.add_new_patron_to_the_library(patron_type='Student', patrons=student3
 my_library.borrow_a_book(book=book1, student_id=student3.patron_id)
 my_library.add_new_patron_to_the_library(patron_type='Teacher', patrons=teachers)
 my_library.add_students_to_a_teacher(teacher_id='123123144', students=students)
-
-
