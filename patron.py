@@ -8,7 +8,7 @@ class Patron:
         self.name = name
         self.patron_id = patron_id
 
-    # Function to verify the spelling and writing convention to the library system of patrons
+    """Function to check if there is a problem with the patron details"""
     def verify_patron_details(self):
         # Error handling - Check Verification : don't contain non-letters & id digit numbers is nine exact!
         try:

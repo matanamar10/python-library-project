@@ -1,4 +1,6 @@
 # students.py is a file which represents the students - type of actually patron.
+import logging
+
 from patron import Patron
 from datetime import datetime, timedelta
 from book import Book
@@ -11,7 +13,8 @@ class Student(Patron):
         self.age = age
         self.books = {}
 
-    # This function will add books to the student list - used when borrow a book action is performed
+    """Assign book specific student - add the book to the list of books which user got"""
+
     def add_book_to_student(self, book=None):
         # Error Handling - validate that the customer provide a book instance.
         try:
@@ -28,7 +31,7 @@ class Student(Patron):
             else:
                 raise TypeError(f"The object you have provided is not a Book type!")
         except TypeError as e:
-            print(f"assign book to student has failed due to unexpected errors: {e}")
+            logging.error(f"assign book to student has failed due to unexpected errors: {e}")
 
     # Used when user want to return a book to the library - delete the book from the user list.
     def remove_book_from_student(self, book=None):
@@ -41,9 +44,12 @@ class Student(Patron):
             else:
                 raise ValueError(f"Book is already not borrowed...")
         except ValueError as e:
-            print(f"Tried to remove the book from this student - action failed due to error: {e}")
+            logging.error(f"Tried to remove the book from this student - action failed due to error: {e}")
 
-    # Function to calculate the student bills.
+    """The calculate_bill function will check the bills every students have to pay
+    if some students got bills to pay , the will be added to the bills dictionary!
+    """
+
     def calculate_bill(self):
         calculated_bill = 0
         check_date = datetime.now()
@@ -53,5 +59,5 @@ class Student(Patron):
                 fine = days_late * 0.50  # Example fine calculation: $0.50 per day late
                 calculated_bill = calculated_bill + fine
             else:
-                print(f"There isn't any bill to add for this book!")
+                logging.info(f"There isn't any bill to add for this book!")
         return calculated_bill
