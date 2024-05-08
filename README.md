@@ -29,8 +29,6 @@ lib = Library("Central Library")
 Adding a Book
 To add a book to the library:
 
-python
-Copy code
 from book import Book
 
 new_book = Book("1984", "George Orwell", "123456789")
@@ -38,8 +36,6 @@ lib.add_new_books_to_the_library(new_book)
 Adding a Patron
 To add a student or teacher to the library:
 
-python
-Copy code
 from patron import Student, Teacher  
 
 new_student = Student("John Doe", "000000001", 20)
@@ -50,16 +46,12 @@ lib.add_new_patron_to_the_library('Teacher', new_teacher)
 # Borrowing a Book
 To borrow a book:
 
-python
-Copy code
 lib.borrow_a_book(new_book, new_student.patron_id)
 Returning a Book
 To return a book:
-
-python
-Copy code
 lib.return_a_book(new_book, new_student.patron_id)
-Contributing
+
+# Contributing
 Contributions to this project are welcome! Here's how you can contribute:
 
 Fork the Repository: Fork the project to your own GitHub account.
@@ -67,3 +59,8 @@ Create a Feature Branch: Create a branch in your forked repository for your cont
 Commit Your Changes: Make your changes and commit them with a clear commit message.
 Push to the Branch: Push your changes to your repository.
 Submit a Pull Request: Open a pull request from your feature branch to the original repository.
+
+# Architeture Explanation : 
+
+  # Classes: 
+    * Books: 
