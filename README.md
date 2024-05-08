@@ -59,8 +59,3 @@ Create a Feature Branch: Create a branch in your forked repository for your cont
 Commit Your Changes: Make your changes and commit them with a clear commit message.
 Push to the Branch: Push your changes to your repository.
 Submit a Pull Request: Open a pull request from your feature branch to the original repository.
-
-# Architeture Explanation : 
-
-  # Classes: 
-    * Books: 
