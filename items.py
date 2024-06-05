@@ -1,6 +1,6 @@
 # items.py
 
-from pydantic import BaseModel, Field, field_validator, ValidationError
+from pydantic import BaseModel, Field
 
 """
 The library items class is represent all the items in the class - which is books and disks.

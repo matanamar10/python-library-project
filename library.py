@@ -79,7 +79,7 @@ class Library(BaseModel):
         except ValidationError as v:
             logging.error(f"Patron addition action failed due to errors: {v}")
 
-    def search_library_items(self, library_item_title=None, library_item_isbn=None):
+    def search_library_items(self, library_item_title=None , library_item_isbn=None):
         """
         The search_library_items function is search for existing library items , filtered by items title/isbn.
         the function get those arguments as parameters:
@@ -98,7 +98,7 @@ class Library(BaseModel):
             logging.info(result)
         return results
 
-    def remove_libray_item_from_the_library(self, library_item_isbn):
+    def remove_libray_item_from_the_library(self, library_item_isbn: str):
         """
         The remove_library_item_from_the_library function is removing existing items -
         disks or books from the library system.

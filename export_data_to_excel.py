@@ -1,18 +1,22 @@
 import csv
+from typing import Dict
+
 from students import Student
 from disks import Disk
 from pydantic import BaseModel
 
-"""The DataExporter class will take care in any data exporting of the library data We chose to export all the library 
+"""
+The DataExporter class will take care in any data exporting of the library data We chose to export all the library 
 data to separated excel files. Each time that there is a change in one of the Library classes methods - this class 
-methods will be called - each by his responsibility"""
+methods will be called - each by his responsibility
+"""
 
 
-def export_library_items(library_items):
+def export_library_items(library_items: Dict):
     """
     The export_library_items method being called every time there is a change in the library items - book or disks
     it could be deletion of the items from the library system or status changing of the items itself - for example:
-    if customer return a book - it not borrowed anymore.
+    if customer return a book - it is not borrowed anymore.
     The method get as parameters:
     1.The library items dict from the library itself.
     """
@@ -26,7 +30,7 @@ def export_library_items(library_items):
                 [library_item_isbn, library_item_type, library_item.title, library_item.is_borrowed])
 
 
-def export_library_patrons(library_patrons):
+def export_library_patrons(library_patrons: Dict):
     """The export_library_patrons method being called every time there is a change in the library patrons - students or
     teachers it could be deletion of the items from the library system or status changing of the items itself
      - for example:
@@ -43,7 +47,7 @@ def export_library_patrons(library_patrons):
             patrons_writer.writerow([patron_type, patron_type, patron.name, list(patron.patron_items.items())])
 
 
-def export_bills(library_bills):
+def export_bills(library_bills: Dict):
     """The export_bills method being called every time there is a change in the library bills system - for example:
     if student return a book - it will check if he got a bills to pay and if he got -
     it will call the export_bills method.
