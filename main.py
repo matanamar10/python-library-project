@@ -4,7 +4,7 @@ from library import Library
 from book import Book
 from students import Student
 from teacher import Teacher
-from borrowing_department import borrow_a_library_item
+from borrowing_department import borrow_a_library_item, return_a_library_item
 
 my_library = Library(name="Amar-Library")
 student1 = Student(patron_id='123456789', name="Matan", age=21)
@@ -23,3 +23,5 @@ my_library.add_new_library_items_to_the_library(books)
 my_library.add_new_patron_to_the_library(students)
 borrow_a_library_item(my_library, book1, student3.patron_id)
 my_library.add_new_patron_to_the_library(teachers)
+return_a_library_item(my_library, book1, student3.patron_id)
+borrow_a_library_item(my_library, book1, student3.patron_id)

@@ -5,23 +5,18 @@ from finance import calculate_bill
 from library import Library
 from items import LibraryItem
 
-"""
-The Borrowing Department Class is used to manage all the borrow and return of library items transactions of the library 
-system. 
-The Library Class will inherit from this class
- and will use the return / borrow methods when a customer will ask to borrow/return a library item(Disk/Book)
-"""
-
-"""The function return_a_library_item is help to the library to manage the library items that customers want to return
-after they borrowed them.
-
-The function get as parameters :
-1. Library - The Library object itself
-2. Library_item - book/disk to return
-3. patron_id - the string which represent the patron id - the customer id"""
-
 
 def return_a_library_item(library: Library, library_item: LibraryItem, patron_id: str):
+    """
+    The function return_a_library_item is help to the library to manage the library items that customers want to return
+    after they borrowed them.
+
+    The function get as parameters :
+    1. Library - The Library object itself
+    2. Library_item - book/disk to return
+    3. patron_id - the string which represent the patron id - the customer id.
+    """
+
     try:
         patron = library.patrons[patron_id]
         if not patron:
@@ -34,7 +29,7 @@ def return_a_library_item(library: Library, library_item: LibraryItem, patron_id
         library.bills[patron_id] = patron_calculated_bill
         if library.bills[patron_id] != 0:
             raise ValueError(f"Patron {patron_id} needs to pay their bill before returning items")
-        patron.remove_book_from_student(library_item)
+        patron.remove_library_item_from_patron(library_item)
         library_item.is_borrowed = False  # The book is not borrowed anymore.
         export_library_items(library.library_items)
         logging.info(f"Library item {library_item.title} has been returned by patron {patron_id}")
@@ -42,16 +37,17 @@ def return_a_library_item(library: Library, library_item: LibraryItem, patron_id
         logging.error(f"Failed to return library item: {e}")
 
 
-"""The function borrow_a_library_item is help to the library to manage the library items that customers want to borrow
-after they borrowed them.
-
-The function get as parameters :
-1. Library - The Library object itself
-2. Library_item - book/disk to borrow
-3. patron_id - the string which represent the patron id - the customer id"""
-
-
 def borrow_a_library_item(library: Library, library_item: LibraryItem, patron_id: str):
+    """
+    The function borrow_a_library_item is help to the library to manage the library items that customers want to borrow
+    after they borrowed them.
+
+    The function get as parameters :
+    1. Library - The Library object itself
+    2. Library_item - book/disk to borrow
+    3. patron_id - the string which represent the patron id - the customer id
+    """
+
     try:
         patron = library.patrons[patron_id]
         if not patron:
@@ -72,4 +68,9 @@ def borrow_a_library_item(library: Library, library_item: LibraryItem, patron_id
 
 
 class BorrowingManagement(BaseModel):
-    """ The function get book object and student id string - and return the book to the library"""
+    """
+    The Borrowing Department Class is used to manage all the borrow and return of library items transactions of the library
+    system.
+    The Library Class will inherit from this class
+     and will use the return / borrow methods when a customer will ask to borrow/return a library item(Disk/Book)
+    """

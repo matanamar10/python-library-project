@@ -18,13 +18,13 @@ class Patron(BaseModel):
     patron_id: str = Field(..., pattern=r'^\d{9}$')
     patron_items: Dict[str, Optional[datetime]] = {}
 
-    """
-    The add_library_item_to_patron is assign a specific item to specific patron - used when patron borrow an item.
-    """
-
     def add_library_item_to_patron(self, library_item=None):
+        """
+        The add_library_item_to_patron is assign a specific item to specific patron - used when patron borrow an item.
+        """
+
         try:
-            self.patron_items[library_item.isbn] = library_item
+            self.patron_items[library_item.isbn] = datetime.now()
         except ValidationError as e:
             logging.error(f"assign book to student has failed due to unexpected errors: {e}")
 

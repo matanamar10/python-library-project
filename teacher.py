@@ -7,4 +7,4 @@ from patron import Patron
 
 
 class Teacher(Patron):
-    discount: ClassVar[float] = 0.5
+    discount: ClassVar[float] = 0.6

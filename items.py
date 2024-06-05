@@ -2,11 +2,13 @@
 
 from pydantic import BaseModel, Field, field_validator, ValidationError
 
-"""The library items class is represent all the items in the class - which is books and disks.
+"""
+The library items class is represent all the items in the class - which is books and disks.
 it contains 3 main attributes:
  1. is_borrowed - boolean attribute that check if the item is borrowed by customer or not
  2. title - the library item title
- 3. isbn - the unique id of the item"""
+ 3. isbn - the unique id of the item
+ """
 
 
 class LibraryItem(BaseModel):

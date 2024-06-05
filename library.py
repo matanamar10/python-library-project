@@ -24,11 +24,13 @@ class Library(BaseModel):
     bills: Dict[str, float] = {}  # Dictionary to keep track of all bills, keyed by patron ID
     name: str
 
-    """The add_new_library_items_to_the_library function is adding new items - books or disks to the library system
-    the function get those arguments as parameters:
-    1. new_library_items - list of items to add."""
-
     def add_new_library_items_to_the_library(self, new_library_items: List):
+        """
+        The add_new_library_items_to_the_library function is adding new items - books or disks to the library system
+        the function get those arguments as parameters:
+        1. new_library_items - list of items to add.
+        """
+
         try:
             for new_library_item in new_library_items:
                 if new_library_item.isbn in self.library_items.keys():
@@ -42,13 +44,13 @@ class Library(BaseModel):
         except ValueError as e:
             logging.error(f"Add library item failed: {e}")
 
-    """
-    The add_new_patrons_to_the_library function is adding new patrons - students or teachers to the library system.
-    the function get those arguments as parameters:
-    1. patrons_to_add - list of patrons to add.
-    """
-
     def add_new_patron_to_the_library(self, patrons_to_add: List):
+        """
+        The add_new_patrons_to_the_library function is adding new patrons - students or teachers to the library system.
+        the function get those arguments as parameters:
+        1. patrons_to_add - list of patrons to add.
+        """
+
         try:
             for patron in patrons_to_add:
                 if patron.patron_id in self.patrons:
@@ -59,14 +61,14 @@ class Library(BaseModel):
         except ValidationError as e:
             logging.error(f"Add patron failed: {e}")
 
-    """
-    The remove_patrons_from_the_library function is removing existing patrons - 
-    students or teachers from the library system.
-    the function get those arguments as parameters:
-    1. patrons_to_remove - list of patrons to remove.
-    """
-
     def remove_patrons_from_the_library(self, patrons_to_remove: List):
+        """
+        The remove_patrons_from_the_library function is removing existing patrons -
+        students or teachers from the library system.
+        the function get those arguments as parameters:
+        1. patrons_to_remove - list of patrons to remove.
+        """
+
         try:
             for patron in patrons_to_remove:
                 if patron.patron_id not in self.patrons:
@@ -77,14 +79,14 @@ class Library(BaseModel):
         except ValidationError as v:
             logging.error(f"Patron addition action failed due to errors: {v}")
 
-    """
-    The search_library_items function is search for existing library items , filtered by items title/isbn.
-    the function get those arguments as parameters:
-    1. library_item_title - title to filter on him.
-    2. library_item_isbn - isbn to filter on him.
-    """
-
     def search_library_items(self, library_item_title=None, library_item_isbn=None):
+        """
+        The search_library_items function is search for existing library items , filtered by items title/isbn.
+        the function get those arguments as parameters:
+        1. library_item_title - title to filter on him.
+        2. library_item_isbn - isbn to filter on him.
+        """
+
         # The results list is a list where all the filter results will be saved
         results = []
         for library_item in self.library_items.values():
@@ -96,14 +98,14 @@ class Library(BaseModel):
             logging.info(result)
         return results
 
-    """
-    The remove_library_item_from_the_library function is removing existing items - 
-    disks or books from the library system.
-    the function get those arguments as parameters:
-    1.library_item_isbn  - item to remove.
-    """
-
     def remove_libray_item_from_the_library(self, library_item_isbn):
+        """
+        The remove_library_item_from_the_library function is removing existing items -
+        disks or books from the library system.
+        the function get those arguments as parameters:
+        1.library_item_isbn  - item to remove.
+        """
+
         try:
             # Check if the book isbn which provided by user is it exist in the books dictionary
             if library_item_isbn not in self.library_items.keys():

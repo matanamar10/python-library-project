@@ -11,4 +11,4 @@ from pydantic import Field
 
 class Student(Patron):
     age: int = Field(..., ge=14, le=99)
-    discount: ClassVar[float] = 0.3
+    discount: ClassVar[float] = 0.7
