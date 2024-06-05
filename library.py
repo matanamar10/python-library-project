@@ -13,7 +13,8 @@ The Library Class is represent all the necessary library attributes for managing
 The class got some attributes , like : 
 1. items - Dictionary which contains all the items we have in our library - books and disks! 
 2. patrons - Dictionary which contains all the members of the library - Teachers or Students
-3. name - The name of the library   
+3. name - The name of the library 
+4. bills - the dictionary which represent the bills of each student or teacher have to pay.  
 """
 
 
@@ -23,8 +24,9 @@ class Library(BaseModel):
     bills: Dict[str, float] = {}  # Dictionary to keep track of all bills, keyed by patron ID
     name: str
 
-    """The field validator of library attribute will ensure that in many functions in the Library Class the passed
-     parameter is for sure a iterable one. """
+    """The add_new_library_items_to_the_library function is adding new items - books or disks to the library system
+    the function get those arguments as parameters:
+    1. new_library_items - list of items to add."""
 
     def add_new_library_items_to_the_library(self, new_library_items: List):
         try:
@@ -40,9 +42,10 @@ class Library(BaseModel):
         except ValueError as e:
             logging.error(f"Add library item failed: {e}")
 
-    """ 
-    The function get as parameter string of patron type - Student or Teacher 
-    also the function got list of patrons , and add them to library system. 
+    """
+    The add_new_patrons_to_the_library function is adding new patrons - students or teachers to the library system.
+    the function get those arguments as parameters:
+    1. patrons_to_add - list of patrons to add.
     """
 
     def add_new_patron_to_the_library(self, patrons_to_add: List):
@@ -56,8 +59,11 @@ class Library(BaseModel):
         except ValidationError as e:
             logging.error(f"Add patron failed: {e}")
 
-    """ The function gets as a parameter the patron type as String - Student or Teacher
-    , and list of patrons to remove
+    """
+    The remove_patrons_from_the_library function is removing existing patrons - 
+    students or teachers from the library system.
+    the function get those arguments as parameters:
+    1. patrons_to_remove - list of patrons to remove.
     """
 
     def remove_patrons_from_the_library(self, patrons_to_remove: List):
@@ -71,6 +77,13 @@ class Library(BaseModel):
         except ValidationError as v:
             logging.error(f"Patron addition action failed due to errors: {v}")
 
+    """
+    The search_library_items function is search for existing library items , filtered by items title/isbn.
+    the function get those arguments as parameters:
+    1. library_item_title - title to filter on him.
+    2. library_item_isbn - isbn to filter on him.
+    """
+
     def search_library_items(self, library_item_title=None, library_item_isbn=None):
         # The results list is a list where all the filter results will be saved
         results = []
@@ -82,6 +95,13 @@ class Library(BaseModel):
         for result in results:
             logging.info(result)
         return results
+
+    """
+    The remove_library_item_from_the_library function is removing existing items - 
+    disks or books from the library system.
+    the function get those arguments as parameters:
+    1.library_item_isbn  - item to remove.
+    """
 
     def remove_libray_item_from_the_library(self, library_item_isbn):
         try:

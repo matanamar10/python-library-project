@@ -5,6 +5,21 @@ from finance import calculate_bill
 from library import Library
 from items import LibraryItem
 
+"""
+The Borrowing Department Class is used to manage all the borrow and return of library items transactions of the library 
+system. 
+The Library Class will inherit from this class
+ and will use the return / borrow methods when a customer will ask to borrow/return a library item(Disk/Book)
+"""
+
+"""The function return_a_library_item is help to the library to manage the library items that customers want to return
+after they borrowed them.
+
+The function get as parameters :
+1. Library - The Library object itself
+2. Library_item - book/disk to return
+3. patron_id - the string which represent the patron id - the customer id"""
+
 
 def return_a_library_item(library: Library, library_item: LibraryItem, patron_id: str):
     try:
@@ -25,6 +40,15 @@ def return_a_library_item(library: Library, library_item: LibraryItem, patron_id
         logging.info(f"Library item {library_item.title} has been returned by patron {patron_id}")
     except ValueError as e:
         logging.error(f"Failed to return library item: {e}")
+
+
+"""The function borrow_a_library_item is help to the library to manage the library items that customers want to borrow
+after they borrowed them.
+
+The function get as parameters :
+1. Library - The Library object itself
+2. Library_item - book/disk to borrow
+3. patron_id - the string which represent the patron id - the customer id"""
 
 
 def borrow_a_library_item(library: Library, library_item: LibraryItem, patron_id: str):
