@@ -1,66 +1,45 @@
 import csv
-from typing import Dict
-
+from typing import Dict, Any
 from students import Student
 from disks import Disk
-from pydantic import BaseModel
-
-"""
-The DataExporter class will take care in any data exporting of the library data We chose to export all the library 
-data to separated excel files. Each time that there is a change in one of the Library classes methods - this class 
-methods will be called - each by his responsibility
-"""
 
 
-def export_library_items(library_items: Dict):
+def export_library_attributes(data: Dict[str, Any], attribute_type: str):
     """
-    The export_library_items method being called every time there is a change in the library items - book or disks
-    it could be deletion of the items from the library system or status changing of the items itself - for example:
-    if customer return a book - it is not borrowed anymore.
-    The method get as parameters:
-    1.The library items dict from the library itself.
+    A generic function to export different library attributes to a CSV file based on the attribute_type.
+
+    :param data: The dictionary containing the data to export.
+    :param attribute_type: Type of attribute to export ('items', 'patrons', 'bills').
     """
+    export_config = {
+        'items': {
+            'filename': 'library_items.csv',
+            'headers': ["ISBN", "Type", "Title", "Is Borrowed?"],
+            'row_preparer': lambda k, v: [k, "Disk" if isinstance(v, Disk) else "Book", v.title, v.is_borrowed]
+        },
+        'patrons': {
+            'filename': 'patrons.csv',
+            'headers': ["ID", "Type", "Name", "Library-Items"],
+            'row_preparer': lambda k, v: [k, "Student" if isinstance(v, Student) else "Teacher", v.name,
+                                          list(v.patron_items.items())]
+        },
+        'bills': {
+            'filename': 'bills.csv',
+            'headers': ["Student ID", "Calculated Bill"],
+            'row_preparer': lambda k, v: [k, v]
+        }
+    }
 
-    with open("library_items.csv", mode="w", newline='') as library_items_file:
-        library_items_writer = csv.writer(library_items_file)
-        library_items_writer.writerow(["ISBN", "Type", "Title", "Is Borrowed?"])
-        for library_item_isbn, library_item in library_items.items():
-            library_item_type = "Disk" if isinstance(library_item, Disk) else "Book"
-            library_items_writer.writerow(
-                [library_item_isbn, library_item_type, library_item.title, library_item.is_borrowed])
+    if attribute_type not in export_config:
+        raise ValueError(f"Unknown attribute_type: {attribute_type}")
 
+    config = export_config[attribute_type]
+    filename = config['filename']
+    headers = config['headers']
+    row_preparer = config['row_preparer']
 
-def export_library_patrons(library_patrons: Dict):
-    """The export_library_patrons method being called every time there is a change in the library patrons - students or
-    teachers it could be deletion of the items from the library system or status changing of the items itself
-     - for example:
-    if student return a book - it not assign to him anymore.
-
-    The method get as parameters:
-    1.The library_patrons dict from the library itself."""
-
-    with open("patrons.csv", mode="w", newline='') as patrons_file:
-        patrons_writer = csv.writer(patrons_file)
-        patrons_writer.writerow(["ID", "Type", "Name", "Library-Items"])
-        for patron_id, patron in library_patrons.items():
-            patron_type = "Student" if isinstance(patron, Student) else "Teacher"
-            patrons_writer.writerow([patron_type, patron_type, patron.name, list(patron.patron_items.items())])
-
-
-def export_bills(library_bills: Dict):
-    """The export_bills method being called every time there is a change in the library bills system - for example:
-    if student return a book - it will check if he got a bills to pay and if he got -
-    it will call the export_bills method.
-
-    The method get as parameters:
-    1.The library_bills dict from the library itself."""
-
-    with open("bills.csv", mode="w", newline='') as bills_file:
-        bills_writer = csv.writer(bills_file)
-        bills_writer.writerow(["Student ID", "Calculated Bill"])
-        for patron_id, bill in library_bills.items():
-            bills_writer.writerow([patron_id, bill])
-
-
-class DataExporter(BaseModel):
-    pass
+    with open(filename, mode="w", newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(headers)
+        for key, value in data.items():
+            writer.writerow(row_preparer(key, value))

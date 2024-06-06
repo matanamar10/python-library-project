@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 import logging
-from export_data_to_excel import export_library_items
+from export_data_to_excel import export_library_attributes
 from finance import calculate_bill
 from library import Library
 from items import LibraryItem
@@ -31,7 +31,7 @@ def return_a_library_item(library: Library, library_item: LibraryItem, patron_id
             raise ValueError(f"Patron {patron_id} needs to pay their bill before returning items")
         patron.remove_library_item_from_patron(library_item)
         library_item.is_borrowed = False  # The book is not borrowed anymore.
-        export_library_items(library.library_items)
+        export_library_attributes(library.library_items, attribute_type="items")
         logging.info(f"Library item {library_item.title} has been returned by patron {patron_id}")
     except ValueError as e:
         logging.error(f"Failed to return library item: {e}")
@@ -61,7 +61,7 @@ def borrow_a_library_item(library: Library, library_item: LibraryItem, patron_id
 
         patron.add_library_item_to_patron(library_item=library_item)
         library_item.is_borrowed = True
-        export_library_items(library.library_items)
+        export_library_attributes(library.library_items, attribute_type="items")
         logging.info(f"Library item {library_item.title} has been borrowed by patron {patron_id}")
     except ValueError as e:
         logging.error(f"Failed to borrow library item: {e}")

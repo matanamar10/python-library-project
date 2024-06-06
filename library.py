@@ -1,8 +1,8 @@
 import logging
-from export_data_to_excel import export_library_items, export_library_patrons
+from export_data_to_excel import export_library_attributes
 from items import LibraryItem
 from patron import Patron
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import BaseModel, ValidationError
 from typing import Dict, List
 
 # Configure logging
@@ -37,7 +37,7 @@ class Library(BaseModel):
                     raise ValueError(f"The library item with isbn {new_library_item.isbn} is already exist in the "
                                      f"Library System")
                 self.library_items[new_library_item.isbn] = new_library_item
-                export_library_items(self.library_items)
+                export_library_attributes(self.library_items, attribute_type="items")
                 logging.info(
                     f"The library item {new_library_item.title} with isbn {new_library_item.isbn} is added to "
                     f"'{self.name}' library")
@@ -57,7 +57,7 @@ class Library(BaseModel):
                     raise ValueError(f"The patron with id {patron.patron_id} is already in the library")
                 self.patrons[patron.patron_id] = patron
                 logging.info(f"The {patron} {patron.patron_id} is added successfully to the library")
-                export_library_patrons(self.patrons)
+                export_library_attributes(self.patrons, attribute_type="patrons")
         except ValidationError as e:
             logging.error(f"Add patron failed: {e}")
 
@@ -75,11 +75,11 @@ class Library(BaseModel):
                     raise ValueError(f"The patron isn't exists in the library system")
                 del self.patrons[patron.patron_id]
                 logging.info(f"The patron {patron.patron_id} is removed successfully from the library")
-                export_library_patrons(self.library_items)
+                export_library_attributes(self.patrons, attribute_type="patrons")
         except ValidationError as v:
             logging.error(f"Patron addition action failed due to errors: {v}")
 
-    def search_library_items(self, library_item_title=None , library_item_isbn=None):
+    def search_library_items(self, library_item_title=None, library_item_isbn=None):
         """
         The search_library_items function is search for existing library items , filtered by items title/isbn.
         the function get those arguments as parameters:
@@ -114,6 +114,6 @@ class Library(BaseModel):
                 raise ValueError(f"The library item with isbn {library_item_isbn} is borrowed and cant be removed")
             del self.library_items[library_item_isbn]
             logging.info(f"The item {library_item_isbn} is removed from the library")
-            export_library_items(self.library_items)
+            export_library_attributes(self.library_items, attribute_type="items")
         except ValueError as e:
             logging.error(f"The library item deletion failed due to this error: {e}")
