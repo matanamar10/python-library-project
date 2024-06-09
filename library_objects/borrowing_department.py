@@ -7,13 +7,20 @@ from library_objects.items import LibraryItem
 
 def return_a_library_item(library: Library, library_item: LibraryItem, patron_id: str):
     """
-    The function return_a_library_item is help to the library to manage the library items that customers want to return
-    after they borrowed them.
+    Handles the return process of a library item by a patron.
 
-    The function get as parameters :
-    1. Library - The Library object itself
-    2. Library_item - book/disk to return
-    3. patron_id - the string which represent the patron id - the customer id.
+    This function updates the library system when a patron returns a borrowed item. It checks if the patron exists,
+    verifies if the item is in the library's inventory and currently borrowed, calculates any outstanding bills,
+    and processes the return if all conditions are met.
+
+    Parameters:
+    - library (Library): The Library object representing the library system.
+    - library_item (LibraryItem): The LibraryItem object (book, disk, etc.) being returned.
+    - patron_id (str): The unique identifier for the patron returning the item.
+
+    Raises:
+    - ValueError: If the patron does not exist, the item is not in the library, the item is not borrowed,
+                  or if the patron has outstanding bills.
     """
 
     try:
@@ -38,13 +45,19 @@ def return_a_library_item(library: Library, library_item: LibraryItem, patron_id
 
 def borrow_a_library_item(library: Library, library_item: LibraryItem, patron_id: str):
     """
-    The function borrow_a_library_item is help to the library to manage the library items that customers want to borrow
-    after they borrowed them.
+    Handles the borrowing process of a library item by a patron.
 
-    The function get as parameters :
-    1. Library - The Library object itself
-    2. Library_item - book/disk to borrow
-    3. patron_id - the string which represent the patron id - the customer id
+    This function updates the library system when a patron borrows an item. It checks if the patron exists,
+    verifies if the item is in the library's inventory and not currently borrowed, and processes the borrowing
+    if all conditions are met.
+
+    Parameters:
+    - library (Library): The Library object representing the library system.
+    - library_item (LibraryItem): The LibraryItem object (book, disk, etc.) being borrowed.
+    - patron_id (str): The unique identifier for the patron borrowing the item.
+
+    Raises:
+    - ValueError: If the patron does not exist, the item is not in the library, or if the item is already borrowed.
     """
 
     try:
