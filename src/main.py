@@ -10,7 +10,7 @@ my_library = Library(name="Amar-Library")
 student1 = Student(patron_id='123456789', name="Matan", age=21)
 student2 = Student(patron_id='123456777', name="Oran", age=21)
 student3 = Student(patron_id='123456123', name="Greg", age=20)
-students = [student3, student2
+students = [student3, student2]
 book1 = Book(isbn='123456789', title="Example", author="SnoopDog")
 book2 = Book(isbn='123456788', title="Exam", author="SnoopDob")
 book3 = Book(isbn='123321456', title="SDS", author="Panda")
