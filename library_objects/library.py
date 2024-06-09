@@ -1,7 +1,7 @@
 import logging
-from export_data_to_excel import export_library_attributes
-from items import LibraryItem
-from patron import Patron
+from exporter.export_data_to_excel import export_library_attributes
+from library_objects.items import LibraryItem
+from library_objects.patron import Patron
 from pydantic import BaseModel, ValidationError
 from typing import Dict, List
 
@@ -9,12 +9,13 @@ from typing import Dict, List
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 """
-The Library Class is represent all the necessary library attributes for managing library system.
-The class got some attributes , like : 
-1. items - Dictionary which contains all the items we have in our library - books and disks! 
-2. patrons - Dictionary which contains all the members of the library - Teachers or Students
-3. name - The name of the library 
-4. bills - the dictionary which represent the bills of each student or teacher have to pay.  
+Represents a library with various attributes for managing its system.
+
+Attributes:
+    library_items (Dict[str, LibraryItem]): Dictionary of library items.
+    patrons (Dict[str, Patron]): Dictionary of library patrons.
+    bills (Dict[str, float]): Dictionary of patron bills.
+    name (str): The name of the library.
 """
 
 
@@ -26,9 +27,10 @@ class Library(BaseModel):
 
     def add_new_library_items_to_the_library(self, new_library_items: List):
         """
-        The add_new_library_items_to_the_library function is adding new items - books or disks to the library system
-        the function get those arguments as parameters:
-        1. new_library_items - list of items to add.
+        Add new items to the library.
+
+        Args:
+            new_library_items (List[LibraryItem]): List of items to add.
         """
 
         try:
@@ -46,9 +48,10 @@ class Library(BaseModel):
 
     def add_new_patron_to_the_library(self, patrons_to_add: List):
         """
-        The add_new_patrons_to_the_library function is adding new patrons - students or teachers to the library system.
-        the function get those arguments as parameters:
-        1. patrons_to_add - list of patrons to add.
+        Add new patrons to the library.
+
+        Args:
+            patrons_to_add (List[Patron]): List of patrons to add.
         """
 
         try:
@@ -63,10 +66,10 @@ class Library(BaseModel):
 
     def remove_patrons_from_the_library(self, patrons_to_remove: List):
         """
-        The remove_patrons_from_the_library function is removing existing patrons -
-        students or teachers from the library system.
-        the function get those arguments as parameters:
-        1. patrons_to_remove - list of patrons to remove.
+        Remove patrons from the library.
+
+        Args:
+            patrons_to_remove (List[Patron]): List of patrons to remove.
         """
 
         try:
@@ -81,10 +84,14 @@ class Library(BaseModel):
 
     def search_library_items(self, library_item_title=None, library_item_isbn=None):
         """
-        The search_library_items function is search for existing library items , filtered by items title/isbn.
-        the function get those arguments as parameters:
-        1. library_item_title - title to filter on him.
-        2. library_item_isbn - isbn to filter on him.
+        Search for library items by title or ISBN.
+
+        Args:
+            library_item_title (str): Title to filter by.
+            library_item_isbn (str): ISBN to filter by.
+
+        Returns:
+            List[str]: List of matching item titles.
         """
 
         # The results list is a list where all the filter results will be saved
@@ -100,10 +107,10 @@ class Library(BaseModel):
 
     def remove_libray_item_from_the_library(self, library_item_isbn: str):
         """
-        The remove_library_item_from_the_library function is removing existing items -
-        disks or books from the library system.
-        the function get those arguments as parameters:
-        1.library_item_isbn  - item to remove.
+        Remove an item from the library by ISBN.
+
+        Args:
+            library_item_isbn (str): ISBN of the item to remove.
         """
 
         try:

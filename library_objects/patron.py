@@ -4,12 +4,12 @@ from datetime import datetime
 import logging
 
 """
-The Patron Class is an abstract class for teachers and students  - 
-The library members.
-It contains 3 main attributes:
-1. name - the patron name
-2. patron_id - the patron id number
-3. patron_items - the dictionary of books and disks which assigned to the patron. 
+Represents a library patron.
+
+Attributes:
+    name (str): The patron's name.
+    patron_id (str): The patron's ID.
+    patron_items (Dict[str, Optional[datetime]]): Items borrowed by the patron.
 """
 
 
@@ -20,7 +20,10 @@ class Patron(BaseModel):
 
     def add_library_item_to_patron(self, library_item=None):
         """
-        The add_library_item_to_patron is assign a specific item to specific patron - used when patron borrow an item.
+        Assign a library item to the patron.
+
+        Args:
+            library_item (LibraryItem): The item to assign.
         """
 
         try:
@@ -28,12 +31,14 @@ class Patron(BaseModel):
         except ValidationError as e:
             logging.error(f"assign book to student has failed due to unexpected errors: {e}")
 
-    """
-    The remove_library_item_from_patron is unassign a specific item from specific patron
-     - used when patron return an item.
-    """
-
     def remove_library_item_from_patron(self, library_item=None):
+        """
+        Unassign a library item from the patron.
+
+        Args:
+            library_item (LibraryItem): The item to unassign.
+        """
+
         try:
             del self.patron_items[library_item.isbn]
         except ValueError as e:

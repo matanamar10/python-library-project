@@ -1,12 +1,16 @@
 # students.py is a file which represents the students - type of actually patron.
 from typing import ClassVar
 
-from patron import Patron
+from library_objects.patron import Patron
 from pydantic import Field
 
-"""The Student class is inherit from the patron class and contains two extended attributes: 
-1. age - the student age - a number between 14 to 99
-2. discount - discount percentage on borrowing items"""
+"""
+Represents a student patron with additional attributes.
+
+Attributes:
+    age (int): The age of the student.
+    discount (float): The discount rate for the student.
+"""
 
 
 class Student(Patron):

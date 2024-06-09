@@ -1,7 +1,7 @@
 import csv
 from typing import Dict, Any
-from students import Student
-from disks import Disk
+from library_objects.students import Student
+from library_objects.disks import Disk
 
 
 def export_library_attributes(data: Dict[str, Any], attribute_type: str):

@@ -2,18 +2,19 @@ from pydantic import BaseModel
 from datetime import datetime
 import logging
 
-from patron import Patron
-
-"""
-The finance class is take care all the finance side in the library - 
-in our case is for right now to calculate the bills for students/teachers that late in returning borrowed items.
-"""
+from library_objects.patron import Patron
 
 
 def calculate_bill(patron: Patron):
-    """The calculate bill function calculate the bill for the relevant patron
-    The function get :
-    1. patron - the patron object - and on him it will calculate the bill"""
+    """
+    Calculate the bill for a patron based on overdue items.
+
+    Args:
+        patron (Patron): The patron for whom to calculate the bill.
+
+    Returns:
+        float: The calculated bill amount.
+    """
 
     calculated_bill = 0
     check_date = datetime.now()
@@ -25,10 +26,3 @@ def calculate_bill(patron: Patron):
         else:
             logging.info(f"There isn't any bill to add for this book!")
     return calculated_bill
-
-
-"""The function return the calculated bill"""
-
-
-class Finance(BaseModel):
-    pass

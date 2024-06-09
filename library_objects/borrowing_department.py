@@ -1,9 +1,8 @@
-from pydantic import BaseModel
 import logging
-from export_data_to_excel import export_library_attributes
-from finance import calculate_bill
-from library import Library
-from items import LibraryItem
+from exporter.export_data_to_excel import export_library_attributes
+from library_objects.finance import calculate_bill
+from library_objects.library import Library
+from library_objects.items import LibraryItem
 
 
 def return_a_library_item(library: Library, library_item: LibraryItem, patron_id: str):
@@ -65,12 +64,3 @@ def borrow_a_library_item(library: Library, library_item: LibraryItem, patron_id
         logging.info(f"Library item {library_item.title} has been borrowed by patron {patron_id}")
     except ValueError as e:
         logging.error(f"Failed to borrow library item: {e}")
-
-
-class BorrowingManagement(BaseModel):
-    """
-    The Borrowing Department Class is used to manage all the borrow and return of library items transactions of the library
-    system.
-    The Library Class will inherit from this class
-     and will use the return / borrow methods when a customer will ask to borrow/return a library item(Disk/Book)
-    """
