@@ -1,13 +1,12 @@
-from pydantic import BaseModel
 from datetime import datetime
 import logging
 
-from library_objects.patron import Patron
+from library_system.patrons.patron import Patron
 
 
 def calculate_bill(patron: Patron):
     """
-    Calculate the bill for a patron based on overdue items.
+    Calculate the bill for a patron based on overdue library_items.
 
     Args:
         patron (Patron): The patron for whom to calculate the bill.

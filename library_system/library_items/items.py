@@ -1,9 +1,9 @@
-# items.py
+# library_items.py
 
 from pydantic import BaseModel, Field
 
 """
-Represents a generic library item.
+Represents a generic library_system item.
 
 Attributes:
     is_borrowed (bool): Indicates if the item is currently borrowed.

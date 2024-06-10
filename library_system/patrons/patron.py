@@ -4,7 +4,7 @@ from datetime import datetime
 import logging
 
 """
-Represents a library patron.
+Represents a library_system patron.
 
 Attributes:
     name (str): The patron's name.
@@ -20,7 +20,7 @@ class Patron(BaseModel):
 
     def add_library_item_to_patron(self, library_item=None):
         """
-        Assign a library item to the patron.
+        Assign a library_system item to the patron.
 
         Args:
             library_item (LibraryItem): The item to assign.
@@ -33,7 +33,7 @@ class Patron(BaseModel):
 
     def remove_library_item_from_patron(self, library_item=None):
         """
-        Unassign a library item from the patron.
+        Unassign a library_system item from the patron.
 
         Args:
             library_item (LibraryItem): The item to unassign.

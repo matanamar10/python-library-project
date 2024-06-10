@@ -1,9 +1,9 @@
 # disks.py
 from pydantic import Field
-from library_objects.items import LibraryItem
+from library_system.library_items.items import LibraryItem
 
 """
-The Disk class inherits from LibraryItem and represents disks in the library.
+The Disk class inherits from LibraryItem and represents disks in the library_system.
 
 Attributes:
     disk_type (str): The type of the disk (e.g., DVD).
