@@ -1,45 +1,42 @@
 import csv
-from typing import Dict, Any
-from library_system.patrons.students import Student
+from typing import Dict, Any, Callable, List
 from library_system.library_items.disks.disks import Disk
+from library_system.patrons.students import Student
+
+# Constants for file paths
+LIBRARY_ITEMS_FILE = 'data/library_items.csv'
+PATRONS_FILE = 'data/patrons.csv'
+BILLS_FILE = 'data/bills.csv'
 
 
-def export_library_attributes(data: Dict[str, Any], attribute_type: str):
+def export_to_csv(data: Dict[str, Any], filename: str, headers: List[str],
+                  row_preparer: Callable[[str, Any], List[Any]]):
     """
-    A generic function to export different library_system attributes to a CSV file based on the attribute_type.
+    A generic function to export data to a CSV file.
 
     :param data: The dictionary containing the data to export.
-    :param attribute_type: Type of attribute to export ('library_items', 'patrons', 'bills').
+    :param filename: The path of the CSV file to write.
+    :param headers: The headers for the CSV file.
+    :param row_preparer: A function to prepare each row for the CSV file.
     """
-    export_config = {
-        'library_items': {
-            'filename': r'C:\Users\amarm\PycharmProjects\python-library-project\data\library_items.csv',
-            'headers': ["ISBN", "Type", "Title", "Is Borrowed?"],
-            'row_preparer': lambda k, v: [k, "Disk" if isinstance(v, Disk) else "Book", v.title, v.is_borrowed]
-        },
-        'patrons': {
-            'filename': r'C:\Users\amarm\PycharmProjects\python-library-project\data\patrons.csv',
-            'headers': ["ID", "Type", "Name", "Library-Items"],
-            'row_preparer': lambda k, v: [k, "Student" if isinstance(v, Student) else "Teacher", v.name,
-                                          list(v.patron_items.items())]
-        },
-        'bills': {
-            'filename': r'C:\Users\amarm\PycharmProjects\python-library-project\data\bills.csv',
-            'headers': ["Student ID", "Calculated Bill"],
-            'row_preparer': lambda k, v: [k, v]
-        }
-    }
-
-    if attribute_type not in export_config:
-        raise ValueError(f"Unknown attribute_type: {attribute_type}")
-
-    config = export_config[attribute_type]
-    filename = config['filename']
-    headers = config['headers']
-    row_preparer = config['row_preparer']
-
     with open(filename, mode="w", newline='') as file:
         writer = csv.writer(file)
         writer.writerow(headers)
         for key, value in data.items():
             writer.writerow(row_preparer(key, value))
+
+
+# Example row preparer functions
+def prepare_library_item_row(isbn: str, item: Any) -> List[Any]:
+    """Prepare a row for a library item."""
+    return [isbn, "Disk" if isinstance(item, Disk) else "Book", item.title, item.is_borrowed]
+
+
+def prepare_patron_row(id: str, patron: Any) -> List[Any]:
+    """Prepare a row for a patron."""
+    return [id, "Student" if isinstance(patron, Student) else "Teacher", patron.name, list(patron.patron_items.items())]
+
+
+def prepare_bill_row(student_id: str, bill: float) -> List[Any]:
+    """Prepare a row for a bill."""
+    return [student_id, bill]
