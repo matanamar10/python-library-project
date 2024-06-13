@@ -1,5 +1,5 @@
 import logging
-from exporter.export_data_to_excel import export_library_attributes
+from exporter.export_data_to_excel import export_data, item_row_preparer, patron_row_preparer
 from library_system.library_items.items import LibraryItem
 from library_system.patrons.patron import Patron
 from pydantic import BaseModel, ValidationError
@@ -40,7 +40,8 @@ class Library(BaseModel):
                         f"The library_system item with isbn {new_library_item.isbn} is already exist in the "
                         f"Library System")
                 self.library_items[new_library_item.isbn] = new_library_item
-                export_library_attributes(self.library_items, attribute_type="library_items")
+                export_data(self.library_items, '../data/library_items.csv', ["ISBN", "Type", "Title", "Is Borrowed?"],
+                            item_row_preparer)
                 logging.info(
                     f"The library_system item {new_library_item.title} with isbn {new_library_item.isbn} is added to "
                     f"'{self.name}' library_system")
@@ -61,7 +62,8 @@ class Library(BaseModel):
                     raise ValueError(f"The patron with id {patron.patron_id} is already in the library_system")
                 self.patrons[patron.patron_id] = patron
                 logging.info(f"The {patron} {patron.patron_id} is added successfully to the library_system")
-                export_library_attributes(self.patrons, attribute_type="patrons")
+                export_data(self.patrons, '../data/patrons.csv', ["ID", "Type", "Name", "Library-Items"],
+                            patron_row_preparer)
         except ValidationError as e:
             logging.error(f"Add patron failed: {e}")
 
@@ -79,7 +81,8 @@ class Library(BaseModel):
                     raise ValueError(f"The patron isn't exists in the library_system system")
                 del self.patrons[patron.patron_id]
                 logging.info(f"The patron {patron.patron_id} is removed successfully from the library_system")
-                export_library_attributes(self.patrons, attribute_type="patrons")
+                export_data(self.patrons, '../data/patrons.csv', ["ID", "Type", "Name", "Library-Items"],
+                            patron_row_preparer)
         except ValidationError as v:
             logging.error(f"Patron addition action failed due to errors: {v}")
 
@@ -124,6 +127,7 @@ class Library(BaseModel):
                     f"The library_system item with isbn {library_item_isbn} is borrowed and cant be removed")
             del self.library_items[library_item_isbn]
             logging.info(f"The item {library_item_isbn} is removed from the library_system")
-            export_library_attributes(self.library_items, attribute_type="library_items")
+            export_data(self.library_items, '../data/library_items.csv', ["ID", "Type", "Name", "Library-Items"],
+                        item_row_preparer)
         except ValueError as e:
             logging.error(f"The library_system item deletion failed due to this error: {e}")

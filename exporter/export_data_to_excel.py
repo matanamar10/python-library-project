@@ -1,42 +1,39 @@
-import csv
-from typing import Dict, Any, Callable, List
-from library_system.library_items.disks.disks import Disk
 from library_system.patrons.students import Student
+from library_system.library_items.disks.disks import Disk
 
-# Constants for file paths
-LIBRARY_ITEMS_FILE = 'data/library_items.csv'
-PATRONS_FILE = 'data/patrons.csv'
-BILLS_FILE = 'data/bills.csv'
+DISK_TYPE = "Disk"
+BOOK_TYPE = "Book"
+STUDENT_TYPE = "Student"
+TEACHER_TYPE = "Teacher"
 
 
-def export_to_csv(data: Dict[str, Any], filename: str, headers: List[str],
-                  row_preparer: Callable[[str, Any], List[Any]]):
+def export_data(data, filename, headers, row_preparer):
     """
-    A generic function to export data to a CSV file.
+    Export data to a CSV file.
 
-    :param data: The dictionary containing the data to export.
-    :param filename: The path of the CSV file to write.
-    :param headers: The headers for the CSV file.
-    :param row_preparer: A function to prepare each row for the CSV file.
+    :param data: Dictionary containing the data to be exported
+    :param filename: Name of the CSV file
+    :param headers: List of headers for the CSV file
+    :param row_preparer: Function to prepare each row for the CSV file
     """
-    with open(filename, mode="w", newline='') as file:
-        writer = csv.writer(file)
+    import csv
+
+    with open(filename, 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
         writer.writerow(headers)
+
         for key, value in data.items():
-            writer.writerow(row_preparer(key, value))
+            row = row_preparer(key, value)
+            writer.writerow(row)
 
 
-# Example row preparer functions
-def prepare_library_item_row(isbn: str, item: Any) -> List[Any]:
-    """Prepare a row for a library item."""
-    return [isbn, "Disk" if isinstance(item, Disk) else "Book", item.title, item.is_borrowed]
+def item_row_preparer(k, v):
+    return [k, DISK_TYPE if isinstance(v, Disk) else BOOK_TYPE, v.title, v.is_borrowed]
 
 
-def prepare_patron_row(id: str, patron: Any) -> List[Any]:
-    """Prepare a row for a patron."""
-    return [id, "Student" if isinstance(patron, Student) else "Teacher", patron.name, list(patron.patron_items.items())]
+def patron_row_preparer(k, v):
+    return [k, STUDENT_TYPE if isinstance(v, Student) else TEACHER_TYPE, v.name, list(v.patron_items.items())]
 
 
-def prepare_bill_row(student_id: str, bill: float) -> List[Any]:
-    """Prepare a row for a bill."""
-    return [student_id, bill]
+def bill_row_preparer(k, v):
+    return [k, v]

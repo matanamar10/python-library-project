@@ -1,5 +1,5 @@
 import logging
-from exporter.export_data_to_excel import export_library_attributes
+from exporter.export_data_to_excel import export_data, item_row_preparer
 from library_system.management.finance import calculate_bill
 from library_system.library import Library
 from library_system.library_items.items import LibraryItem
@@ -9,9 +9,9 @@ def return_a_library_item(library: Library, library_item: LibraryItem, patron_id
     """
     Handles the return process of a library_system item by a patron.
 
-    This function updates the library_system system when a patron returns a borrowed item. It checks if the patron exists,
-    verifies if the item is in the library_system's inventory and currently borrowed, calculates any outstanding bills,
-    and processes the return if all conditions are met.
+    This function updates the library_system system when a patron returns a borrowed item. It checks if the patron
+    exists, verifies if the item is in the library_system's inventory and currently borrowed, calculates any
+    outstanding bills, and processes the return if all conditions are met.
 
     Parameters:
     - library_system (Library): The Library object representing the library_system system.
@@ -38,7 +38,9 @@ def return_a_library_item(library: Library, library_item: LibraryItem, patron_id
             raise ValueError(f"Patron {patron_id} needs to pay their bill before returning library_items")
         patron.remove_library_item_from_patron(library_item)
         library_item.is_borrowed = False  # The book is not borrowed anymore.
-        export_library_attributes(library.library_items, attribute_type="library_items")
+        # Call these functions from outside with all necessary parameters
+        export_data(library.library_items, '../data/library_items.csv', ["ISBN", "Type", "Title", "Is Borrowed?"],
+                    item_row_preparer)
         logging.info(f"Library item {library_item.title} has been returned by patron {patron_id}")
     except ValueError as e:
         logging.error(f"Failed to return library_system item: {e}")
@@ -74,7 +76,8 @@ def borrow_a_library_item(library: Library, library_item: LibraryItem, patron_id
 
         patron.add_library_item_to_patron(library_item=library_item)
         library_item.is_borrowed = True
-        export_library_attributes(library.library_items, attribute_type="library_items")
+        export_data(library.library_items, '../data/library_items.csv', ["ISBN", "Type", "Title", "Is Borrowed?"],
+                    item_row_preparer)
         logging.info(f"Library item {library_item.title} has been borrowed by patron {patron_id}")
     except ValueError as e:
         logging.error(f"Failed to borrow library_system item: {e}")
