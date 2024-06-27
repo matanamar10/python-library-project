@@ -4,31 +4,10 @@ from library_system.library_items.items import LibraryItem
 from library_system.patrons.patron import Patron
 
 
-@pytest.fixture
-def library():
-    return Library(name="Test Library")
-
-
-@pytest.fixture
-def sample_books():
-    return [
-        LibraryItem(isbn="123456789", title="Book 1", is_borrowed=False),
-        LibraryItem(isbn="678901234", title="Book 2", is_borrowed=False)
-    ]
-
-
-@pytest.fixture
-def sample_patrons():
-    return [
-        Patron(patron_id="123456789", name="PatronA"),
-        Patron(patron_id="212345678", name="PatronB")
-    ]
-
-
 def test_add_new_library_items_to_the_library(library, sample_books):
     library.add_new_library_items_to_the_library(sample_books)
     assert "123456789" in library.library_items
-    assert "212345678" in library.library_items
+    assert "678901234" in library.library_items
 
 
 def test_add_new_library_items_to_the_library_duplicate(library, sample_books):
@@ -69,7 +48,7 @@ def test_search_library_items(library, sample_books):
 
 def test_remove_library_item_from_the_library(library, sample_books):
     library.add_new_library_items_to_the_library(sample_books)
-    library.remove_libray_item_from_the_library("12345")
+    library.remove_libray_item_from_the_library("123456789")
     assert "123456788" not in library.library_items
 
 
@@ -82,4 +61,4 @@ def test_remove_library_item_from_the_library_borrowed(library, sample_books):
     library.add_new_library_items_to_the_library(sample_books)
     library.library_items["123456789"].is_borrowed = True
     with pytest.raises(ValueError):
-        library.remove_libray_item_from_the_library("12345")
+        library.remove_libray_item_from_the_library("123456789")
