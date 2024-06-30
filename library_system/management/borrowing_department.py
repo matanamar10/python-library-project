@@ -64,8 +64,7 @@ def borrow_a_library_item(library: Library, library_item: LibraryItem, patron_id
     """
 
     try:
-        patron = library.patrons[patron_id]
-        if not patron:
+        if patron_id not in library.patrons.keys():
             raise ValueError(f"Patron with ID {patron_id} not found in the library_system")
 
         if library_item.isbn not in library.library_items:
@@ -74,6 +73,7 @@ def borrow_a_library_item(library: Library, library_item: LibraryItem, patron_id
         if library_item.is_borrowed:
             raise ValueError(f"Library item with ISBN {library_item.isbn} is already borrowed")
 
+        patron = library.patrons[patron_id]
         patron.add_library_item_to_patron(library_item=library_item)
         library_item.is_borrowed = True
         export_data(library.library_items, '../data/library_items.csv', ["ISBN", "Type", "Title", "Is Borrowed?"],

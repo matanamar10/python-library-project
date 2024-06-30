@@ -31,6 +31,8 @@ class Library(BaseModel):
 
         Args:
             new_library_items (List[LibraryItem]): List of library_items to add.
+            :param new_library_items:
+            :param self:
         """
 
         try:
@@ -40,8 +42,8 @@ class Library(BaseModel):
                         f"The library_system item with isbn {new_library_item.isbn} is already exist in the "
                         f"Library System")
                 self.library_items[new_library_item.isbn] = new_library_item
-                export_data(self.library_items, '../data/library_items.csv', ["ISBN", "Type", "Title", "Is Borrowed?"],
-                            item_row_preparer)
+                export_data(self.library_items, '../data/library_items.csv', ["ISBN", "Type", "Title",
+                                                                              "Is Borrowed?"], item_row_preparer)
                 logging.info(
                     f"The library_system item {new_library_item.title} with isbn {new_library_item.isbn} is added to "
                     f"'{self.name}' library_system")
@@ -54,6 +56,8 @@ class Library(BaseModel):
 
         Args:
             patrons_to_add (List[Patron]): List of patrons to add.
+            :param patrons_to_add:
+            :param self:
         """
 
         try:
@@ -73,6 +77,8 @@ class Library(BaseModel):
 
         Args:
             patrons_to_remove (List[Patron]): List of patrons to remove.
+            :param patrons_to_remove:
+            :param self:
         """
 
         try:
@@ -96,6 +102,9 @@ class Library(BaseModel):
 
         Returns:
             List[str]: List of matching item titles.
+            :param library_item_isbn:
+            :param library_item_title:
+            :param self:
         """
 
         # The results list is a list where all the filter results will be saved
@@ -115,6 +124,8 @@ class Library(BaseModel):
 
         Args:
             library_item_isbn (str): ISBN of the item to remove.
+            :param library_item_isbn:
+            :param self:
         """
 
         try:
