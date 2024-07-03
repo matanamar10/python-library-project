@@ -50,16 +50,16 @@ def test_search_library_items_by_isbn(library, library_item):
 
 def test_remove_library_item_from_the_library(library, library_item):
     library.add_new_library_items_to_the_library([library_item])
-    library.remove_libray_item_from_the_library(library_item.isbn)
+    library.remove_library_item_from_the_library(library_item.isbn)
     assert library_item.isbn not in library.library_items
 
 
 def test_remove_nonexistent_library_item_from_the_library(library):
     with pytest.raises(ValueError):
-        library.remove_libray_item_from_the_library("nonexistent_isbn")
+        library.remove_library_item_from_the_library("nonexistent_isbn")
 
 
 def test_remove_borrowed_library_item_from_the_library(library, library_item_borrowed):
     library.add_new_library_items_to_the_library([library_item_borrowed])
     with pytest.raises(ValueError):
-        library.remove_libray_item_from_the_library(library_item_borrowed.isbn)
+        library.remove_library_item_from_the_library(library_item_borrowed.isbn)
