@@ -1,8 +1,9 @@
 import logging
-from exporter.export_data_to_excel import export_data, item_row_preparer
+from datetime import datetime
 from library_system.management.finance import calculate_bill
 from library_system.library import Library
 from library_system.library_items.items import LibraryItem
+from mongodb.mongo_handler import update_item_status, update_patron_items
 
 
 def return_a_library_item(library: Library, library_item: LibraryItem, patron_id: str):
@@ -24,7 +25,7 @@ def return_a_library_item(library: Library, library_item: LibraryItem, patron_id
     """
 
     try:
-        patron = library.patrons[patron_id]
+        patron = library.patrons.get(patron_id)
         if not patron:
             raise ValueError(f"Patron with patron id {patron_id} was not found in the library_system")
         if library_item.isbn not in library.library_items.keys():
@@ -38,9 +39,8 @@ def return_a_library_item(library: Library, library_item: LibraryItem, patron_id
             raise ValueError(f"Patron {patron_id} needs to pay their bill before returning library_items")
         patron.remove_library_item_from_patron(library_item)
         library_item.is_borrowed = False  # The book is not borrowed anymore.
-        # Call these functions from outside with all necessary parameters
-        export_data(library.library_items, '../data/library_items.csv', ["ISBN", "Type", "Title", "Is Borrowed?"],
-                    item_row_preparer)
+        update_patron_items(patron_id, library_item.isbn, "return")
+        update_item_status(library_item.isbn, False)
         logging.info(f"Library item {library_item.title} has been returned by patron {patron_id}")
     except ValueError as e:
         logging.error(f"Failed to return library_system item: {e}")
@@ -59,12 +59,13 @@ def borrow_a_library_item(library: Library, library_item: LibraryItem, patron_id
     - library_item (LibraryItem): The LibraryItem object (book, disk, etc.) being borrowed.
     - patron_id (str): The unique identifier for the patron borrowing the item.
 
-    Raises:
-    - ValueError: If the patron does not exist, the item is not in the library_system, or if the item is already borrowed.
+    Raises: - ValueError: If the patron does not exist, the item is not in the library_system, or if the item is
+    already borrowed.
     """
 
     try:
-        if patron_id not in library.patrons.keys():
+        patron = library.patrons.get(patron_id)
+        if not patron:
             raise ValueError(f"Patron with ID {patron_id} not found in the library_system")
 
         if library_item.isbn not in library.library_items:
@@ -73,11 +74,11 @@ def borrow_a_library_item(library: Library, library_item: LibraryItem, patron_id
         if library_item.is_borrowed:
             raise ValueError(f"Library item with ISBN {library_item.isbn} is already borrowed")
 
-        patron = library.patrons[patron_id]
         patron.add_library_item_to_patron(library_item=library_item)
         library_item.is_borrowed = True
-        export_data(library.library_items, '../data/library_items.csv', ["ISBN", "Type", "Title", "Is Borrowed?"],
-                    item_row_preparer)
+        borrow_date = datetime.now()
+        update_patron_items(patron_id, library_item.isbn, "borrow", borrow_date)
+        update_item_status(library_item.isbn, True)
         logging.info(f"Library item {library_item.title} has been borrowed by patron {patron_id}")
     except ValueError as e:
         logging.error(f"Failed to borrow library_system item: {e}")
