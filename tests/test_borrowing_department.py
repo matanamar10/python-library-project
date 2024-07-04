@@ -15,7 +15,6 @@ def test_borrow_a_library_item_success(library, library_item, patron):
 
 def test_borrow_a_library_item_patron_not_exist(library, library_item, not_exist_patron):
     library.library_items[library_item.isbn] = library_item
-
     with pytest.raises(ValueError,
                        match=f"Patron with ID {not_exist_patron.patron_id} not found in the library"):
         borrow_a_library_item(library, library_item, not_exist_patron.patron_id)

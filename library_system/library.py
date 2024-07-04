@@ -3,7 +3,7 @@ from library_system.library_items.items import LibraryItem
 from library_system.patrons.patron import Patron
 from pydantic import BaseModel, ValidationError
 from typing import Dict, List
-from mongodb.mongo_handler import insert_document, delete_document, update_item_status, update_patron_items
+from mongodb.mongo_handler import insert_document, delete_document
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -34,7 +34,7 @@ class Library(BaseModel):
         """
         try:
             for new_library_item in new_library_items:
-                if new_library_item.isbn in self.library_items:
+                if new_library_item.isbn in self.library_items.keys():
                     raise ValueError(
                         f"The library item with isbn {new_library_item.isbn} already exists in the library"
                     )
@@ -45,6 +45,7 @@ class Library(BaseModel):
                 )
         except ValueError as e:
             logging.error(f"Add library item failed: {e}")
+            raise
 
     def add_new_patron_to_the_library(self, patrons_to_add: List[Patron]):
         """
@@ -62,6 +63,7 @@ class Library(BaseModel):
                 logging.info(f"The patron {patron.name} with id {patron.patron_id} was added to the library")
         except ValidationError as e:
             logging.error(f"Add patron failed: {e}")
+            raise
 
     def remove_patrons_from_the_library(self, patrons_to_remove: List[Patron]):
         """
@@ -79,6 +81,7 @@ class Library(BaseModel):
                 logging.info(f"The patron {patron.patron_id} was removed from the library")
         except ValidationError as v:
             logging.error(f"Remove patron failed: {v}")
+            raise
 
     def search_library_items(self, library_item_title=None, library_item_isbn=None):
         """
@@ -107,7 +110,7 @@ class Library(BaseModel):
             library_item_isbn (str): ISBN of the item to remove.
         """
         try:
-            if library_item_isbn not in self.library_items:
+            if library_item_isbn not in self.library_items.keys():
                 raise ValueError(f"The library item with isbn {library_item_isbn} does not exist in the library")
             if self.library_items[library_item_isbn].is_borrowed:
                 raise ValueError(f"The library item with isbn {library_item_isbn} is borrowed and cannot be removed")
@@ -116,57 +119,4 @@ class Library(BaseModel):
             logging.info(f"The item {library_item_isbn} was removed from the library")
         except ValueError as e:
             logging.error(f"Remove library item failed: {e}")
-
-    def borrow_library_item(self, library_item: LibraryItem, patron_id: str):
-        """
-        Borrow a library item.
-
-        Args:
-            library_item (LibraryItem): The library item to be borrowed.
-            patron_id (str): The ID of the patron borrowing the item.
-        """
-        try:
-            patron = self.patrons.get(patron_id)
-            if not patron:
-                raise ValueError(f"Patron with ID {patron_id} not found in the library")
-            if library_item.isbn not in self.library_items:
-                raise ValueError(f"Library item with ISBN {library_item.isbn} not found in the library")
-            if library_item.is_borrowed:
-                raise ValueError(f"Library item with ISBN {library_item.isbn} is already borrowed")
-
-            patron.add_library_item_to_patron(library_item=library_item)
-            library_item.is_borrowed = True
-
-            update_item_status(library_item.isbn, True)
-            update_patron_items(patron_id, library_item.isbn, "borrow")
-
-            logging.info(f"Library item {library_item.title} has been borrowed by patron {patron_id}")
-        except ValueError as e:
-            logging.error(f"Failed to borrow library item: {e}")
-
-    def return_library_item(self, library_item: LibraryItem, patron_id: str):
-        """
-        Return a borrowed library item.
-
-        Args:
-            library_item (LibraryItem): The library item to be returned.
-            patron_id (str): The ID of the patron returning the item.
-        """
-        try:
-            patron = self.patrons.get(patron_id)
-            if not patron:
-                raise ValueError(f"Patron with ID {patron_id} not found in the library")
-            if library_item.isbn not in self.library_items:
-                raise ValueError(f"Library item with ISBN {library_item.isbn} not found in the library")
-            if not library_item.is_borrowed:
-                raise ValueError(f"Library item with ISBN {library_item.isbn} is not borrowed")
-
-            patron.remove_library_item_from_patron(library_item)
-            library_item.is_borrowed = False
-
-            update_item_status(library_item.isbn, False)
-            update_patron_items(patron_id, library_item.isbn, "return")
-
-            logging.info(f"Library item {library_item.title} has been returned by patron {patron_id}")
-        except ValueError as e:
-            logging.error(f"Failed to return library item: {e}")
+            raise
