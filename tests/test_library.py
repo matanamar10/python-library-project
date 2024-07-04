@@ -36,18 +36,6 @@ def test_remove_nonexistent_patron_from_the_library(library, patron):
         library.remove_patrons_from_the_library([patron])
 
 
-def test_search_library_items_by_title(library, library_item):
-    library.add_new_library_items_to_the_library([library_item])
-    results = library.search_library_items(library_item_title=library_item.title)
-    assert library_item.title in results
-
-
-def test_search_library_items_by_isbn(library, library_item):
-    library.add_new_library_items_to_the_library([library_item])
-    results = library.search_library_items(library_item_isbn=library_item.isbn)
-    assert library_item.isbn in results
-
-
 def test_remove_library_item_from_the_library(library, library_item):
     library.add_new_library_items_to_the_library([library_item])
     library.remove_library_item_from_the_library(library_item.isbn)

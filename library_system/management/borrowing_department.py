@@ -44,6 +44,7 @@ def return_a_library_item(library: Library, library_item: LibraryItem, patron_id
         logging.info(f"Library item {library_item.title} has been returned by patron {patron_id}")
     except ValueError as e:
         logging.error(f"Failed to return library_system item: {e}")
+        raise
 
 
 def borrow_a_library_item(library: Library, library_item: LibraryItem, patron_id: str):
@@ -64,16 +65,13 @@ def borrow_a_library_item(library: Library, library_item: LibraryItem, patron_id
     """
 
     try:
-        patron = library.patrons.get(patron_id)
-        if not patron:
-            raise ValueError(f"Patron with ID {patron_id} not found in the library_system")
-
-        if library_item.isbn not in library.library_items:
+        if patron_id not in library.patrons.keys():
+            raise ValueError(f"Patron with ID {patron_id} not found in the library")
+        if library_item.isbn not in library.library_items.keys():
             raise ValueError(f"Library item with ISBN {library_item.isbn} not found in the library_system")
-
         if library_item.is_borrowed:
             raise ValueError(f"Library item with ISBN {library_item.isbn} is already borrowed")
-
+        patron = library.patrons[patron_id]
         patron.add_library_item_to_patron(library_item=library_item)
         library_item.is_borrowed = True
         borrow_date = datetime.now()
@@ -82,3 +80,4 @@ def borrow_a_library_item(library: Library, library_item: LibraryItem, patron_id
         logging.info(f"Library item {library_item.title} has been borrowed by patron {patron_id}")
     except ValueError as e:
         logging.error(f"Failed to borrow library_system item: {e}")
+        raise
