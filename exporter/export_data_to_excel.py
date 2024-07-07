@@ -11,7 +11,7 @@ def export_data(data, filename, headers, row_preparer):
     """
     Export data to a CSV file.
 
-    :param data: Dictionary containing the data to be exported
+    :param data: Dict containing the data to be exported
     :param filename: Name of the CSV file
     :param headers: List of headers for the CSV file
     :param row_preparer: Function to prepare each row for the CSV file
