@@ -1,9 +1,9 @@
 import logging
 from datetime import datetime
-from library_system.management.finance import calculate_bill
-from library_system.library import Library
-from library_system.library_items.items import LibraryItem
-from mongodb.mongo_handler import update_item_status, update_patron_items
+from controllers.management.finance import calculate_bill
+from controllers.library import Library
+from models.library_items.items import LibraryItem
+from dal.dal import update_item_status, update_patron_items
 
 
 def return_a_library_item(library: Library, library_item: LibraryItem, patron_id: str):

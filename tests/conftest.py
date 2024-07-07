@@ -1,9 +1,8 @@
 import mongomock
 import pytest
-from unittest.mock import patch
-from library_system.library import Library
-from library_system.patrons.students import Student
-from library_system.library_items.books.book import Book
+from controllers.library import Library
+from models.patrons.students import Student
+from models.library_items.books.book import Book
 
 
 @pytest.fixture(scope='module')

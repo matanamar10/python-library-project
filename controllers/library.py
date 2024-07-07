@@ -1,9 +1,9 @@
 import logging
-from library_system.library_items.items import LibraryItem
-from library_system.patrons.patron import Patron
+from models.library_items.items import LibraryItem
+from models.patrons.patron import Patron
 from pydantic import BaseModel, ValidationError
 from typing import Dict, List
-from mongodb.mongo_handler import insert_document, delete_document
+from dal.dal import insert_document, delete_document
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
