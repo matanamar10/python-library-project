@@ -1,10 +1,10 @@
 # main.py
 
-from library_system.library import Library
-from library_system.library_items.books.book import Book
-from library_system.patrons.students import Student
-from library_system.patrons.teacher import Teacher
-from library_system.management.borrowing_department import borrow_a_library_item, return_a_library_item
+from controllers.library import Library
+from models.library_items.books.book import Book
+from models.patrons.students import Student
+from models.patrons.teacher import Teacher
+from controllers.management.borrowing_department import borrow_a_library_item, return_a_library_item
 
 my_library = Library(name="Amar-Library")
 student1 = Student(patron_id='123456789', name="Matan", age=21)

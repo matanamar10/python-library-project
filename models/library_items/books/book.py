@@ -1,5 +1,5 @@
 # book.py
-from library_system.library_items.items import LibraryItem
+from models.library_items.items import LibraryItem
 from pydantic import Field
 
 """
