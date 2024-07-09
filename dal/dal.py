@@ -2,7 +2,7 @@ from mongodb.mongodb_handler import (
     update_item_status,
     update_patron_items,
     insert_document,
-    delete_document
+    delete_document, delete_bill, update_bill, insert_bill
 )
 
 
@@ -78,3 +78,53 @@ def delete_document_dal(collection_name, query):
         delete_document(collection_name, query)
     except Exception as e:
         raise Exception(f"Delete document failed: {e}")
+
+
+def insert_bill_dal(patron_id, amount):
+    """
+    Insert a new bill for a patron.
+
+    Args:
+        patron_id (str): The ID of the patron.
+        amount (float): The bill amount.
+
+    Raises:
+        Exception: If inserting the bill fails.
+    """
+    try:
+        insert_bill(patron_id, amount)
+    except Exception as e:
+        raise Exception(f"Insert bill failed: {e}")
+
+
+def update_bill_dal(patron_id, amount):
+    """
+    Update the bill for a patron.
+
+    Args:
+        patron_id (str): The ID of the patron.
+        amount (float): The new bill amount.
+
+    Raises:
+        Exception: If updating the bill fails.
+    """
+    try:
+        update_bill(patron_id, amount)
+    except Exception as e:
+        raise Exception(f"Update bill failed: {e}")
+
+
+def delete_bill_dal(patron_id):
+    """
+    Delete the bill for a patron.
+
+    Args:
+        patron_id (str): The ID of the patron.
+
+    Raises:
+        Exception: If deleting the bill fails.
+    """
+    try:
+        delete_bill(patron_id)
+    except Exception as e:
+        raise Exception(f"Delete bill failed: {e}")

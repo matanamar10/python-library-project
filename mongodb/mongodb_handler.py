@@ -1,5 +1,7 @@
 # mongodb/mongodb_handler.py
 from typing import Union
+
+from mongodb.mongodb_models.bills_model import Bill
 from mongodb.mongodb_models.patron_model import PatronDocument
 from mongodb.mongodb_models.library_item_model import LibraryItemDocument
 
@@ -84,3 +86,50 @@ def delete_document(collection_name, query):
             LibraryItemDocument.objects(__raw__=query).delete()
     except Exception as e:
         raise Exception(f"Delete document failed: {e}")
+
+
+def insert_bill(patron_id: str, amount: float):
+    """
+    Insert a new bill for a patron.
+
+    Args:
+        patron_id (str): The ID of the patron.
+        amount (float): The bill amount.
+    """
+    try:
+        bill = Bill(patron_id=patron_id, amount=amount)
+        bill.save()
+    except Exception as e:
+        raise Exception(f"Insert bill failed: {e}")
+
+
+def update_bill(patron_id: str, amount: float):
+    """
+    Update the bill for a patron.
+
+    Args:
+        patron_id (str): The ID of the patron.
+        amount (float): The new bill amount.
+    """
+    try:
+        bill = Bill.objects(patron_id=patron_id).first()
+        if bill:
+            bill.amount = amount
+            bill.save()
+        else:
+            insert_bill(patron_id, amount)
+    except Exception as e:
+        raise Exception(f"Update bill failed: {e}")
+
+
+def delete_bill(patron_id: str):
+    """
+    Delete the bill for a patron.
+
+    Args:
+        patron_id (str): The ID of the patron.
+    """
+    try:
+        Bill.objects(patron_id=patron_id).delete()
+    except Exception as e:
+        raise Exception(f"Delete bill failed: {e}")

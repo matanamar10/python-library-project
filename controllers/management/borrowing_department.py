@@ -3,7 +3,7 @@ from datetime import datetime
 from controllers.management.finance import calculate_bill
 from controllers.library import Library
 from models.library_items.items import LibraryItem
-from dal.dal import update_item_dal, update_patron_dal
+from dal.dal import update_item_dal, update_patron_dal, update_bill_dal, delete_bill_dal
 from utils import *
 
 
@@ -37,7 +37,10 @@ def return_a_library_item(library: Library, library_item: LibraryItem, patron_id
         patron_calculated_bill = calculate_bill(patron=patron)
         library.bills[patron_id] = patron_calculated_bill
         if library.bills[patron_id] != 0:
+            update_bill_dal(patron_id, patron_calculated_bill)
             raise ValueError(f"Patron {patron_id} needs to pay their bill before returning library_items")
+        else:
+            delete_bill_dal(patron_id)
         patron.remove_library_item_from_patron(library_item)
         library_item.is_borrowed = False  # The book is not borrowed anymore.
         update_patron_dal(patron_id, library_item.isbn, "return")

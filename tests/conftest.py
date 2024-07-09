@@ -1,17 +1,17 @@
-import mongomock
 import pytest
 from controllers.library import Library
 from models.patrons.students import Student
 from models.library_items.books.book import Book
+from mongodb.mongo_setup import connect_to_mongodb, disconnect_from_mongodb
 
 
-@pytest.fixture(scope='module')
-def mock_db():
-    client = mongomock.MongoClient()
-    db = client.library
-    db['library-items'].insert_one({'isbn': '123456789', 'title': 'Test Book', 'is_borrowed': False})
-    db['library-patrons'].insert_one({'patron_id': '111111111', 'name': 'Test Patron', 'patron_items': {}})
-    return db
+@pytest.fixture(scope="session", autouse=True)
+def setup_and_teardown():
+    # Connect to MongoDB before the tests run
+    connect_to_mongodb()
+    yield
+    # Disconnect from MongoDB after all tests are done
+    disconnect_from_mongodb()
 
 
 @pytest.fixture
