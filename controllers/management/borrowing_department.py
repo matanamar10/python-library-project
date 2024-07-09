@@ -3,7 +3,8 @@ from datetime import datetime
 from controllers.management.finance import calculate_bill
 from controllers.library import Library
 from models.library_items.items import LibraryItem
-from dal.dal import update_item_status, update_patron_items
+from dal.dal import update_item_dal, update_patron_dal
+from utils import *
 
 
 def return_a_library_item(library: Library, library_item: LibraryItem, patron_id: str):
@@ -39,8 +40,8 @@ def return_a_library_item(library: Library, library_item: LibraryItem, patron_id
             raise ValueError(f"Patron {patron_id} needs to pay their bill before returning library_items")
         patron.remove_library_item_from_patron(library_item)
         library_item.is_borrowed = False  # The book is not borrowed anymore.
-        update_patron_items(patron_id, library_item.isbn, "return")
-        update_item_status(library_item.isbn, False)
+        update_patron_dal(patron_id, library_item.isbn, "return")
+        update_item_dal(library_item.isbn, False)
         logging.info(f"Library item {library_item.title} has been returned by patron {patron_id}")
     except ValueError as e:
         logging.error(f"Failed to return library_system item: {e}")
@@ -75,8 +76,8 @@ def borrow_a_library_item(library: Library, library_item: LibraryItem, patron_id
         patron.add_library_item_to_patron(library_item=library_item)
         library_item.is_borrowed = True
         borrow_date = datetime.now()
-        update_patron_items(patron_id, library_item.isbn, "borrow", borrow_date)
-        update_item_status(library_item.isbn, True)
+        update_patron_dal(patron_id, library_item.isbn, "borrow", borrow_date)
+        update_item_dal(library_item.isbn, True)
         logging.info(f"Library item {library_item.title} has been borrowed by patron {patron_id}")
     except ValueError as e:
         logging.error(f"Failed to borrow library_system item: {e}")

@@ -3,7 +3,8 @@ from models.library_items.items import LibraryItem
 from models.patrons.patron import Patron
 from pydantic import BaseModel, ValidationError
 from typing import Dict, List
-from dal.dal import insert_document, delete_document
+from dal.dal import insert_document_dal, delete_document_dal
+from utils.utils import patron_pydantic_to_mongoengine, item_pydantic_to_mongoengine
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -39,7 +40,8 @@ class Library(BaseModel):
                         f"The library item with isbn {new_library_item.isbn} already exists in the library"
                     )
                 self.library_items[new_library_item.isbn] = new_library_item
-                insert_document('library-items', new_library_item.dict())
+                new_library_item_document = item_pydantic_to_mongoengine(new_library_item)
+                insert_document_dal('library-items', new_library_item_document)
                 logging.info(
                     f"The library item {new_library_item.title} with isbn {new_library_item.isbn} was added to '{self.name}' library"
                 )
@@ -59,7 +61,8 @@ class Library(BaseModel):
                 if patron.patron_id in self.patrons:
                     raise ValueError(f"The patron with id {patron.patron_id} already exists in the library")
                 self.patrons[patron.patron_id] = patron
-                insert_document('library-patrons', patron.dict())
+                patron_document = patron_pydantic_to_mongoengine(patron)
+                insert_document_dal('library-patrons', patron_document)
                 logging.info(f"The patron {patron.name} with id {patron.patron_id} was added to the library")
         except ValidationError as e:
             logging.error(f"Add patron failed: {e}")
@@ -77,7 +80,7 @@ class Library(BaseModel):
                 if patron.patron_id not in self.patrons:
                     raise ValueError(f"The patron with id {patron.patron_id} does not exist in the library")
                 del self.patrons[patron.patron_id]
-                delete_document('library-patrons', {'patron_id': patron.patron_id})
+                delete_document_dal('library-patrons', {'patron_id': patron.patron_id})
                 logging.info(f"The patron {patron.patron_id} was removed from the library")
         except ValidationError as v:
             logging.error(f"Remove patron failed: {v}")
@@ -115,7 +118,7 @@ class Library(BaseModel):
             if self.library_items[library_item_isbn].is_borrowed:
                 raise ValueError(f"The library item with isbn {library_item_isbn} is borrowed and cannot be removed")
             del self.library_items[library_item_isbn]
-            delete_document('library-items', {'isbn': library_item_isbn})
+            delete_document_dal('library-items', {'isbn': library_item_isbn})
             logging.info(f"The item {library_item_isbn} was removed from the library")
         except ValueError as e:
             logging.error(f"Remove library item failed: {e}")

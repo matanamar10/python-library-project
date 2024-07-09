@@ -1,6 +1,9 @@
-# dal.py
-
-from mongodb.mongo_handler import update_item_status, update_patron_items, insert_document, delete_document
+from mongodb.mongodb_handler import (
+    update_item_status,
+    update_patron_items,
+    insert_document,
+    delete_document
+)
 
 
 def update_item_dal(isbn, is_borrowed):
@@ -13,7 +16,6 @@ def update_item_dal(isbn, is_borrowed):
 
     Raises:
         Exception: If updating the library item status fails.
-
     """
     try:
         update_item_status(isbn, is_borrowed)
@@ -29,11 +31,10 @@ def update_patron_dal(patron_id, isbn, action, borrow_date=None):
         patron_id (str): The ID of the patron.
         isbn (str): The ISBN of the library item.
         action (str): The action to perform ('borrow' or 'return').
-        borrow_date (str, optional): The date the item was borrowed (default is None).
+        borrow_date (datetime, optional): The date the item was borrowed (default is None).
 
     Raises:
         Exception: If updating the library patron status fails.
-
     """
     try:
         update_patron_items(patron_id, isbn, action, borrow_date)
@@ -46,15 +47,18 @@ def insert_document_dal(collection_name, document):
     Insert a document into the specified MongoDB collection.
 
     Args:
-        collection_name (str): The name of the MongoDB collection.
-        document (dict): The document to insert into the collection.
+        document (Document): The document to insert into the collection.
+
+    Returns:
+        str: The ID of the inserted document.
 
     Raises:
         Exception: If inserting the document fails.
-
+        :param document:
+        :param collection_name:
     """
     try:
-        insert_document(collection_name, document)
+        return insert_document(collection_name, document)
     except Exception as e:
         raise Exception(f"Insert document failed: {e}")
 
@@ -69,7 +73,6 @@ def delete_document_dal(collection_name, query):
 
     Raises:
         Exception: If deleting documents fails.
-
     """
     try:
         delete_document(collection_name, query)
