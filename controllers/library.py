@@ -5,18 +5,19 @@ from pydantic import BaseModel, ValidationError
 from typing import Dict, List
 from dal.dal import insert_document_dal, delete_document_dal
 from utils.utils import patron_pydantic_to_mongoengine, item_pydantic_to_mongoengine
+from mongoengine import DoesNotExist, NotUniqueError, OperationError
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 """
-Represents a library_system with various attributes for managing its system.
+Represents a library system with various attributes for managing its system.
 
 Attributes:
-    library_items (Dict[str, LibraryItem]): Dictionary of library_system library_items.
-    patrons (Dict[str, Patron]): Dictionary of library_system patrons.
+    library_items (Dict[str, LibraryItem]): Dictionary of library items.
+    patrons (Dict[str, Patron]): Dictionary of library patrons.
     bills (Dict[str, float]): Dictionary of patron bills.
-    name (str): The name of the library_system.
+    name (str): The name of the library.
 """
 
 
@@ -28,30 +29,41 @@ class Library(BaseModel):
 
     def add_new_library_items_to_the_library(self, new_library_items: List[LibraryItem]):
         """
-        Add new library_items to the library_system.
+        Add new library items to the library system.
 
         Args:
-            new_library_items (List[LibraryItem]): List of library_items to add.
+            new_library_items (List[LibraryItem]): List of library items to add.
         """
         try:
             for new_library_item in new_library_items:
                 if new_library_item.isbn in self.library_items.keys():
-                    raise ValueError(
-                        f"The library item with isbn {new_library_item.isbn} already exists in the library"
+                    raise NotUniqueError(
+                        f"The library item with ISBN {new_library_item.isbn} already exists in the library"
                     )
                 self.library_items[new_library_item.isbn] = new_library_item
                 new_library_item_document = item_pydantic_to_mongoengine(new_library_item)
-                insert_document_dal('library-items', new_library_item_document)
+                success, error_message = insert_document_dal('library-items', new_library_item_document)
+                if not success:
+                    raise ValueError(error_message)
                 logging.info(
-                    f"The library item {new_library_item.title} with isbn {new_library_item.isbn} was added to '{self.name}' library"
+                    f"The library item {new_library_item.title} with ISBN {new_library_item.isbn} was added to '{self.name}' library"
                 )
-        except ValueError as e:
+        except NotUniqueError as e:
             logging.error(f"Add library item failed: {e}")
-            raise
+            raise ValueError(e)
+        except ValidationError as e:
+            logging.error(f"Validation error: {e}")
+            raise ValueError(f"Validation error: {e}")
+        except OperationError as e:
+            logging.error(f"Database operation error: {e}")
+            raise ValueError(f"Database operation error: {e}")
+        except Exception as e:
+            logging.error(f"Add library item failed: {e}")
+            raise ValueError(f"Add library item failed: {e}")
 
     def add_new_patron_to_the_library(self, patrons_to_add: List[Patron]):
         """
-        Add new patrons to the library_system.
+        Add new patrons to the library system.
 
         Args:
             patrons_to_add (List[Patron]): List of patrons to add.
@@ -59,18 +71,27 @@ class Library(BaseModel):
         try:
             for patron in patrons_to_add:
                 if patron.patron_id in self.patrons:
-                    raise ValueError(f"The patron with id {patron.patron_id} already exists in the library")
+                    raise NotUniqueError(f"The patron with ID {patron.patron_id} already exists in the library")
                 self.patrons[patron.patron_id] = patron
                 patron_document = patron_pydantic_to_mongoengine(patron)
                 insert_document_dal('library-patrons', patron_document)
-                logging.info(f"The patron {patron.name} with id {patron.patron_id} was added to the library")
-        except ValidationError as e:
+                logging.info(f"The patron {patron.name} with ID {patron.patron_id} was added to the library")
+        except NotUniqueError as e:
             logging.error(f"Add patron failed: {e}")
-            raise
+            raise ValueError(e)
+        except ValidationError as e:
+            logging.error(f"Validation error: {e}")
+            raise ValueError(f"Validation error: {e}")
+        except OperationError as e:
+            logging.error(f"Database operation error: {e}")
+            raise ValueError(f"Database operation error: {e}")
+        except Exception as e:
+            logging.error(f"Add patron failed: {e}")
+            raise ValueError(f"Add patron failed: {e}")
 
     def remove_patrons_from_the_library(self, patrons_to_remove: List[Patron]):
         """
-        Remove patrons from the library_system.
+        Remove patrons from the library system.
 
         Args:
             patrons_to_remove (List[Patron]): List of patrons to remove.
@@ -78,17 +99,26 @@ class Library(BaseModel):
         try:
             for patron in patrons_to_remove:
                 if patron.patron_id not in self.patrons:
-                    raise ValueError(f"The patron with id {patron.patron_id} does not exist in the library")
+                    raise DoesNotExist(f"The patron with ID {patron.patron_id} does not exist in the library")
                 del self.patrons[patron.patron_id]
                 delete_document_dal('library-patrons', {'patron_id': patron.patron_id})
                 logging.info(f"The patron {patron.patron_id} was removed from the library")
-        except ValidationError as v:
-            logging.error(f"Remove patron failed: {v}")
-            raise
+        except DoesNotExist as e:
+            logging.error(f"Remove patron failed: {e}")
+            raise ValueError(e)
+        except ValidationError as e:
+            logging.error(f"Validation error: {e}")
+            raise ValueError(f"Validation error: {e}")
+        except OperationError as e:
+            logging.error(f"Database operation error: {e}")
+            raise ValueError(f"Database operation error: {e}")
+        except Exception as e:
+            logging.error(f"Remove patron failed: {e}")
+            raise ValueError(f"Remove patron failed: {e}")
 
     def search_library_items(self, library_item_title=None, library_item_isbn=None):
         """
-        Search for library_system library_items by title or ISBN.
+        Search for library items by title or ISBN.
 
         Args:
             library_item_title (str): Title to filter by.
@@ -107,19 +137,28 @@ class Library(BaseModel):
 
     def remove_library_item_from_the_library(self, library_item_isbn: str):
         """
-        Remove an item from the library_system by ISBN.
+        Remove an item from the library system by ISBN.
 
         Args:
             library_item_isbn (str): ISBN of the item to remove.
         """
         try:
             if library_item_isbn not in self.library_items.keys():
-                raise ValueError(f"The library item with isbn {library_item_isbn} does not exist in the library")
+                raise DoesNotExist(f"The library item with ISBN {library_item_isbn} does not exist in the library")
             if self.library_items[library_item_isbn].is_borrowed:
-                raise ValueError(f"The library item with isbn {library_item_isbn} is borrowed and cannot be removed")
+                raise ValueError(f"The library item with ISBN {library_item_isbn} is borrowed and cannot be removed")
             del self.library_items[library_item_isbn]
             delete_document_dal('library-items', {'isbn': library_item_isbn})
             logging.info(f"The item {library_item_isbn} was removed from the library")
-        except ValueError as e:
+        except DoesNotExist as e:
             logging.error(f"Remove library item failed: {e}")
-            raise
+            raise ValueError(e)
+        except ValidationError as e:
+            logging.error(f"Validation error: {e}")
+            raise ValueError(f"Validation error: {e}")
+        except OperationError as e:
+            logging.error(f"Database operation error: {e}")
+            raise ValueError(f"Database operation error: {e}")
+        except Exception as e:
+            logging.error(f"Remove library item failed: {e}")
+            raise ValueError(f"Remove library item failed: {e}")
