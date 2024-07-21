@@ -41,10 +41,11 @@ def insert_document_dal(collection_name, document):
 
     Returns:
         str: The ID of the inserted document.
+        :param document:
         :param collection_name:
 
     """
-    return insert_document(collection_name, document)
+    insert_document(collection_name, document)
 
 
 def delete_document_dal(collection_name, query):
