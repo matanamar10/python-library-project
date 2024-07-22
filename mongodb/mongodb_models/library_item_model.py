@@ -7,5 +7,5 @@ class LibraryItemDocument(Document):
     is_borrowed = BooleanField(default=False)
     title = StringField(required=True, max_length=60)
     isbn = StringField(required=True, unique=True, regex=r'^\d{9}$')
-    meta = {
-        'collection': settings.mongo_items_collection}
+    type = StringField(required=True, choices=("Disk", "Book"))
+    meta = {'allow_inheritance': True, 'collection': settings.mongo_items_collection}

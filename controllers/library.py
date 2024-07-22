@@ -5,11 +5,7 @@ from pydantic import BaseModel
 from typing import Dict, List
 from dal.dal import insert_document_dal, delete_document_dal
 from utils.utils import patron_pydantic_to_mongoengine, item_pydantic_to_mongoengine
-from mongoengine import DoesNotExist
 from utils.custom_errors import *
-
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 """
 Represents a library system with various attributes for managing its system.
@@ -37,14 +33,13 @@ class Library(BaseModel):
         """
         for new_library_item in new_library_items:
             if new_library_item.isbn in self.library_items.keys():
-                raise NotUniqueLibraryItemError(
-                    f"The library item with ISBN {new_library_item.isbn} already exists in the library"
-                )
+                raise ItemAlreadyExistsError(new_library_item.isbn)
             self.library_items[new_library_item.isbn] = new_library_item
             new_library_item_document = item_pydantic_to_mongoengine(new_library_item)
             insert_document_dal('library-items', new_library_item_document)
             logging.info(
-                f"The library item {new_library_item.title} with ISBN {new_library_item.isbn} was added to '{self.name}' library"
+                f"The library item {new_library_item.title} with ISBN {new_library_item.isbn} "
+                f"was added to '{self.name}' library"
             )
 
     def add_new_patron_to_the_library(self, patrons_to_add: List[Patron]):
@@ -56,7 +51,7 @@ class Library(BaseModel):
         """
         for patron in patrons_to_add:
             if patron.patron_id in self.patrons:
-                raise NotUniquePatronError(f"The patron with ID {patron.patron_id} already exists in the library")
+                raise PatronNotFoundError(patron.patron_id)
             self.patrons[patron.patron_id] = patron
             patron_document = patron_pydantic_to_mongoengine(patron)
             insert_document_dal('library-patrons', patron_document)
@@ -72,7 +67,7 @@ class Library(BaseModel):
 
         for patron in patrons_to_remove:
             if patron.patron_id not in self.patrons:
-                raise NotExistingPatron(f"The patron with ID {patron.patron_id} does not exist in the library")
+                raise PatronNotFoundError(patron.patron_id)
             del self.patrons[patron.patron_id]
             delete_document_dal('library-patrons', {'patron_id': patron.patron_id})
             logging.info(f"The patron {patron.patron_id} was removed from the library")
@@ -104,7 +99,8 @@ class Library(BaseModel):
             library_item_isbn (str): ISBN of the item to remove.
         """
         if library_item_isbn not in self.library_items.keys():
-            raise DoesNotExist(f"The library item with ISBN {library_item_isbn} does not exist in the library")
+            raise LibraryItemNotFoundError(
+                f"The library item with ISBN {library_item_isbn} does not exist in the library")
         if self.library_items[library_item_isbn].is_borrowed:
             raise ValueError(f"The library item with ISBN {library_item_isbn} is borrowed and cannot be removed")
         del self.library_items[library_item_isbn]

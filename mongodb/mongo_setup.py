@@ -17,11 +17,8 @@ class MongoDBSettings(BaseSettings):
         env_file = '.env'
 
 
-settings = MongoDBSettings()
-
-
 # Connect to MongoDB function
-def connect_to_mongodb():
+def connect_to_mongodb(settings):
     connect(db=settings.mongo_db_name, host=settings.mongo_client)
 
 

@@ -2,74 +2,64 @@
 
 class LibraryError(Exception):
     """Base class for all library-related errors."""
-    pass
+
+    def __init__(self, message=None):
+        if message is None:
+            self.message = "Library error occurred"
+        super().__init__(message)
 
 
-class NotUniqueLibraryItemError(LibraryError):
+class ItemAlreadyExistsError(LibraryError):
     """Raised when a library item already exists."""
-    pass
+
+    def __init__(self, item_isbn: str):
+        message = f"The library item with isbn {item_isbn} is already exist in the library system"
+        super().__init__(message)
 
 
-class NotUniquePatronError(LibraryError):
-    """Raised when a library patron already exists."""
-    pass
+class PatronAlreadyExistsError(LibraryError):
+    """Raised when a library item already exists."""
+
+    def __init__(self, patron_id: str):
+        message = f"The library patron with id {patron_id} is already exist in the library system"
+        super().__init__(message)
 
 
-class LibraryItemDoesNotExistError(LibraryError):
-    """Raised when a library item does not exist."""
-    pass
+class LibraryItemNotFoundError(LibraryError):
+    """Raised when a library item not found in the library system."""
+
+    def __init__(self, item_isbn: str):
+        message = f"The library item with isbn {item_isbn} is not found in the library system"
+        super().__init__(message)
 
 
-class LibraryItemBorrowedError(LibraryError):
+class LibraryItemAlreadyBorrowedError(LibraryError):
     """Raised when a library item is already borrowed."""
-    pass
+
+    def __init__(self, item_isbn: str):
+        message = f"The library item with isbn {item_isbn} is already marked as borrowed "
+        super().__init__(message)
 
 
-class PatronDoesNotExistError(LibraryError):
+class PatronNotFoundError(LibraryError):
     """Raised when a patron does not exist."""
-    pass
+
+    def __init__(self, patron_id: str):
+        message = f"The patron with id {patron_id} is not found in the library system"
+        super().__init__(message)
 
 
-class MultipleRecordsFoundError(LibraryError):
-    """Raised when multiple records are found."""
-    pass
-
-
-class DatabaseOperationError(LibraryError):
-    """Raised when there is a database operation error."""
-    pass
-
-
-class ValidationError(LibraryError):
-    """Raised when there is a validation error."""
-    pass
-
-
-class OutstandingBillError(LibraryError):
-    """Raised when a patron has an outstanding bill."""
-    pass
-
-
-class NotExistingPatron(LibraryError):
-    """Raised when a patron which not exist in the library system try to perform actions."""
-    pass
-
-
-class NotExistingLibraryItem(LibraryError):
-    """Raised when a library item which is not exist in the library system wants to be returned or borrowed."""
-    pass
-
-
-class ExistingBillToPay(LibraryError):
+class BillToPayError(LibraryError):
     """Raised when a patron needs to pay their bills before they can perform an action on library items."""
-    pass
+
+    def __init__(self, patron_id: str):
+        message = f"The patron with id {patron_id} need to pay his bills before he can borrow/return a book"
+        super().__init__(message)
 
 
-class NotBorrowedLibraryItem(LibraryError):
-    """Raised when a patron try to return a item which is not marked as borrowed."""
-    pass
+class BorrowedLibraryItemNotFound(LibraryError):
+    """Raised when a patron try to return an item which is not marked as borrowed."""
 
-
-class BorrowedLibraryItem(LibraryError):
-    """Raised when a patron try to borrow a library item which is already borrowed"""
-    pass
+    def __init__(self, item_isbn: str):
+        message = f"The libray item with isbn {item_isbn} is exist but he is not borrowed."
+        super().__init__(message)
