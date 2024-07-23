@@ -1,7 +1,6 @@
 # Define Patron document
 from mongoengine import Document, StringField, ReferenceField, DictField, DateTimeField
-
-from mongodb.mongo_setup import settings
+from env_utils import MongoDBSettings
 
 
 class PatronDocument(Document):
@@ -10,5 +9,5 @@ class PatronDocument(Document):
     patron_items = DictField(field=DateTimeField())
 
     meta = {
-        'collection': settings.mongo_patrons_collection
+        'collection': MongoDBSettings().mongo_patrons_collection
     }

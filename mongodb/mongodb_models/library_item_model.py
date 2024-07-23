@@ -1,6 +1,5 @@
 from mongoengine import Document, StringField, BooleanField
-
-from mongodb.mongo_setup import settings
+from env_utils import MongoDBSettings
 
 
 class LibraryItemDocument(Document):
@@ -8,4 +7,4 @@ class LibraryItemDocument(Document):
     title = StringField(required=True, max_length=60)
     isbn = StringField(required=True, unique=True, regex=r'^\d{9}$')
     type = StringField(required=True, choices=("Disk", "Book"))
-    meta = {'allow_inheritance': True, 'collection': settings.mongo_items_collection}
+    meta = {'allow_inheritance': True, 'collection': MongoDBSettings().mongo_items_collection}

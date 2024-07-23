@@ -50,8 +50,8 @@ class Library(BaseModel):
             patrons_to_add (List[Patron]): List of patrons to add.
         """
         for patron in patrons_to_add:
-            if patron.patron_id in self.patrons:
-                raise PatronNotFoundError(patron.patron_id)
+            if patron.patron_id in self.patrons.keys():
+                raise PatronAlreadyExistsError(patron.patron_id)
             self.patrons[patron.patron_id] = patron
             patron_document = patron_pydantic_to_mongoengine(patron)
             insert_document_dal('library-patrons', patron_document)

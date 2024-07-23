@@ -46,7 +46,7 @@ def return_a_library_item(library: Library, library_item: LibraryItem, patron_id
     logging.info(f"Library item {library_item.title} has been returned by patron {patron_id}")
 
 
-def borrow_a_library_item(library: Library, library_item: LibraryItem, patron_id: str):
+def borrow_library_item(library: Library, library_item: LibraryItem, patron_id: str):
     """
     Handles the borrowing process of a library item by a patron.
 
