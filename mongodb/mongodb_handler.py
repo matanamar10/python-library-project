@@ -25,7 +25,7 @@ def update_patron_items(patron_id, isbn, action, borrow_date=None):
     Args:
         patron_id (str): The ID of the patron.
         isbn (str): The ISBN of the library item.
-        action (str): The action to perform ('borrow' or 'return').
+        action (str): The action to perform ('borrow' or 'return').i
         borrow_date (str, optional): The date the item was borrowed (default is None).
 
     """

@@ -30,7 +30,7 @@ def return_a_library_item(library: Library, library_item: LibraryItem, patron_id
     if library_item.isbn not in library.library_items.keys():
         raise LibraryItemNotFoundError(library_item.isbn)
     if not library_item.is_borrowed:
-        raise BorrowedLibraryItemNotFound(library_item.isbn)
+        raise LibraryItemAlreadyBorrowedError(library_item.isbn)
 
     patron_calculated_bill = calculate_bill(patron=patron)
     library.bills[patron_id] = patron_calculated_bill
