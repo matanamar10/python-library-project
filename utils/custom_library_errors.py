@@ -1,4 +1,4 @@
-# custom_errors.py
+# custom_library_errors.py
 
 class LibraryError(Exception):
     """Base class for all library-related errors."""

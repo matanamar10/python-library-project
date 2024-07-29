@@ -2,7 +2,7 @@ import logging
 from env_utils import MongoDBSettings
 from mongodb.mongo_setup import connect_to_mongodb, disconnect_from_mongodb
 from src.check_library import check_library
-from utils.custom_errors import *
+from utils.custom_library_errors import *
 
 
 def main():

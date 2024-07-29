@@ -1,94 +1,61 @@
-from mongodb.mongodb_handler import (
-    update_item_status,
-    update_patron_items,
-    insert_document,
-    delete_document, delete_bill, update_bill, insert_bill
-)
+# dal.py
+
+from abc import ABC, abstractmethod
+from typing import Optional, Union
+from datetime import datetime
+
+from mongodb.mongodb_models.library_item_model import LibraryItemDocument
+from mongodb.mongodb_models.patron_model import PatronDocument
 
 
-def update_item_dal(isbn, is_borrowed):
-    """
-    Update the status of a library item identified by its ISBN.
+class LibraryItemRepository(ABC):
+    @abstractmethod
+    def update_item_status(self, isbn: str, is_borrowed: bool):
+        """Update the status of a library item by its ISBN."""
+        pass
 
-    Args:
-        isbn (str): The ISBN of the library item.
-        is_borrowed (bool): True if the item is borrowed, False if it is returned.
+    @abstractmethod
+    def insert_document(self, collection_name, document: Union[PatronDocument, LibraryItemDocument]):
+        """Insert a library item document."""
+        pass
 
-    """
-    update_item_status(isbn, is_borrowed)
-
-
-def update_patron_dal(patron_id, isbn, action, borrow_date=None):
-    """
-    Update the status of a library patron's items based on the action specified.
-
-    Args:
-        patron_id (str): The ID of the patron.
-        isbn (str): The ISBN of the library item.
-        action (str): The action to perform ('borrow' or 'return').
-        borrow_date (datetime, optional): The date the item was borrowed (default is None).
-
-    """
-    update_patron_items(patron_id, isbn, action, borrow_date)
+    @abstractmethod
+    def delete_document(self, collection_name, query):
+        """Delete a library item document."""
+        pass
 
 
-def insert_document_dal(collection_name, document):
-    """
-    Insert a document into the specified MongoDB collection.
+class PatronRepository(ABC):
+    @abstractmethod
+    def update_patron_items(self, patron_id: str, isbn: str, action: str,
+                            borrow_date: Optional[datetime] = None):
+        """Update the items associated with a library patron."""
+        pass
 
-    Args:
-        document (Document): The document to insert into the collection.
+    @abstractmethod
+    def insert_document(self, collection_name, document: Union[PatronDocument, LibraryItemDocument]):
+        """Insert a patron document."""
 
-    Returns:
-        str: The ID of the inserted document.
-        :param document:
-        :param collection_name:
+    pass
 
-    """
-    insert_document(collection_name, document)
-
-
-def delete_document_dal(collection_name, query):
-    """
-    Delete documents from the specified MongoDB collection based on the query.
-
-    Args:
-        collection_name (str): The name of the MongoDB collection.
-        query (dict): The query to match documents for deletion.
-
-    """
-    delete_document(collection_name, query)
+    @abstractmethod
+    def delete_document(self, query):
+        """Delete a patron document."""
+        pass
 
 
-def insert_bill_dal(patron_id, amount):
-    """
-    Insert a new bill for a patron.
+class BillRepository(ABC):
+    @abstractmethod
+    def insert_bill(self, patron_id: str, amount: float):
+        """Insert a new bill for a patron."""
+        pass
 
-    Args:
-        patron_id (str): The ID of the patron.
-        amount (float): The bill amount.
+    @abstractmethod
+    def update_bill(self, patron_id: str, amount: float):
+        """Update the bill for a patron."""
+        pass
 
-    """
-    insert_bill(patron_id, amount)
-
-
-def update_bill_dal(patron_id, amount):
-    """
-    Update the bill for a patron.
-
-    Args:
-        patron_id (str): The ID of the patron.
-        amount (float): The new bill amount.
-
-    """
-    update_bill(patron_id, amount)
-
-
-def delete_bill_dal(patron_id):
-    """
-    Delete the bill for a patron.
-
-    Args:
-        patron_id (str): The ID of the patron.
-    """
-    delete_bill(patron_id)
+    @abstractmethod
+    def delete_bill(self, patron_id: str):
+        """Delete the bill for a patron."""
+        pass
