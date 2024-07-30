@@ -1,6 +1,6 @@
 # Define Patron document
-from mongoengine import Document, StringField, ReferenceField, DictField, DateTimeField
-from env_utils import MongoDBSettings
+from mongoengine import Document, StringField, DictField, DateTimeField
+from src.env_utils import MongoDBSettings
 
 
 class PatronDocument(Document):

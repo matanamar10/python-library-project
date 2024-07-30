@@ -1,5 +1,5 @@
 from mongoengine import Document, StringField, BooleanField
-from env_utils import MongoDBSettings
+from src.env_utils import MongoDBSettings
 
 
 class LibraryItemDocument(Document):
