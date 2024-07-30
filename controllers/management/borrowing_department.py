@@ -16,7 +16,7 @@ class BorrowingDepartment:
         Handles the return process of a library item by a patron.
 
         This function updates the library system when a patron returns a borrowed item. It checks if the patron
-         exists, verifies if the item is in the library's inventory and currently borrowed, calculates any
+         exists, verifies   if the item is in the library's inventory and currently borrowed, calculates any
         outstanding bills, and processes the return if all conditions are met.
 
         Parameters:
