@@ -1,9 +1,10 @@
 import logging
+
+from controllers.controllers_manager import ControllersManager
 from models.library_items.items import LibraryItem
 from models.patrons.patron import Patron
 from pydantic import BaseModel
-from typing import Dict, List
-from mongodb.mongodb_handler import insert_document, delete_document
+from typing import Dict, List, Optional
 from utils.utils import patron_pydantic_to_mongoengine, item_pydantic_to_mongoengine
 from utils.custom_library_errors import *
 
@@ -21,8 +22,17 @@ Attributes:
 class Library(BaseModel):
     library_items: Dict[str, LibraryItem] = {}
     patrons: Dict[str, Patron] = {}
-    bills: Dict[str, float] = {}  # Dictionary to keep track of all bills, keyed by patron ID
+    bills: Dict[str, float] = {}
     name: str
+    controllers_manager: Optional[ControllersManager] = None
+
+    class Config:
+        arbitrary_types_allowed = True
+
+    def __init__(self, **data):
+        super().__init__(**data)
+        if not self.controllers_manager:
+            self.controllers_manager = ControllersManager()
 
     def add_new_library_items_to_the_library(self, new_library_items: List[LibraryItem]):
         """
@@ -36,7 +46,7 @@ class Library(BaseModel):
                 raise ItemAlreadyExistsError(new_library_item.isbn)
             self.library_items[new_library_item.isbn] = new_library_item
             new_library_item_document = item_pydantic_to_mongoengine(new_library_item)
-            insert_document('library-items', new_library_item_document)
+            self.controllers_manager.library_item_repo.insert_document(new_library_item_document)
             logging.info(
                 f"The library item {new_library_item.title} with ISBN {new_library_item.isbn} "
                 f"was added to '{self.name}' library"
@@ -54,7 +64,7 @@ class Library(BaseModel):
                 raise PatronAlreadyExistsError(patron.patron_id)
             self.patrons[patron.patron_id] = patron
             patron_document = patron_pydantic_to_mongoengine(patron)
-            insert_document('library-patrons', patron_document)
+            self.controllers_manager.patron_repo.insert_document(patron_document)
             logging.info(f"The patron {patron.name} with ID {patron.patron_id} was added to the library")
 
     def remove_patrons_from_the_library(self, patrons_to_remove: List[Patron]):
@@ -69,7 +79,7 @@ class Library(BaseModel):
             if patron.patron_id not in self.patrons:
                 raise PatronNotFoundError(patron.patron_id)
             del self.patrons[patron.patron_id]
-            delete_document('library-patrons', {'patron_id': patron.patron_id})
+            self.controllers_manager.patron_repo.delete_document({'patron_id': patron.patron_id})
             logging.info(f"The patron {patron.patron_id} was removed from the library")
 
     def search_library_items(self, library_item_title=None, library_item_isbn=None):
@@ -104,5 +114,5 @@ class Library(BaseModel):
         if self.library_items[library_item_isbn].is_borrowed:
             raise ValueError(f"The library item with ISBN {library_item_isbn} is borrowed and cannot be removed")
         del self.library_items[library_item_isbn]
-        delete_document('library-items', {'isbn': library_item_isbn})
+        self.controllers_manager.library_item_repo.delete_document({'isbn': library_item_isbn})
         logging.info(f"The item {library_item_isbn} was removed from the library")

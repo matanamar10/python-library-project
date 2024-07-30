@@ -2,10 +2,11 @@ from controllers.library import Library
 from models.library_items.books.book import Book
 from models.patrons.students import Student
 from models.patrons.teacher import Teacher
-from controllers.management.borrowing_department import borrow_library_item, return_a_library_item
+from controllers.management.borrowing_department import BorrowingDepartment
 
 
 def check_library():
+    borrowing_department = BorrowingDepartment()
     my_library = Library(name="Amar-Library")
 
     student2 = Student(patron_id='123456777', name="Oran", age=21)
@@ -23,10 +24,10 @@ def check_library():
     my_library.add_new_library_items_to_the_library(books)
     my_library.add_new_patron_to_the_library(students)
 
-    borrow_library_item(my_library, book1, student3.patron_id)
+    borrowing_department.borrow_library_item(my_library, book1, student3.patron_id)
     my_library.add_new_patron_to_the_library(teachers)
 
-    return_a_library_item(my_library, book1, student3.patron_id)
-    borrow_library_item(my_library, book1, student3.patron_id)
+    borrowing_department.return_a_library_item(my_library, book1, student3.patron_id)
+    borrowing_department.borrow_library_item(my_library, book1, student3.patron_id)
 
     my_library.add_new_library_items_to_the_library(books)
