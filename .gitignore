@@ -5,3 +5,4 @@ data/
 __pycache__/
 src/.env
 tests/pytestdebug.log
+pytestdebug.log
