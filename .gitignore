@@ -3,3 +3,6 @@
 data/
 *.pyc
 __pycache__/
+src/.env
+tests/pytestdebug.log
+pytestdebug.log
