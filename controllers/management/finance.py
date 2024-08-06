@@ -1,7 +1,7 @@
 from datetime import datetime
 import logging
 
-from models.patrons.patron import Patron
+from models.entities.patrons import Patron
 
 
 def calculate_bill(patron: Patron):

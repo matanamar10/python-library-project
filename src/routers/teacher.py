@@ -1,6 +1,6 @@
 from typing import ClassVar
 
-from models.patrons.patron import Patron
+from models.entities.patrons.patron import Patron
 
 """
 Represents a teacher patron with additional attributes.

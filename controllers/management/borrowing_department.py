@@ -2,7 +2,7 @@ import logging
 from datetime import datetime
 from controllers.management.finance import calculate_bill
 from controllers.library import Library
-from models.library_items.items import LibraryItem
+from models.entities.library_items.items import LibraryItem
 from utils.custom_library_errors import *
 from controllers.controllers_manager import ControllersManager
 
@@ -11,7 +11,7 @@ class BorrowingDepartment:
     def __init__(self):
         self.controller_manager = ControllersManager()
 
-    def return_a_library_item(self, library: Library, library_item: LibraryItem, patron_id: str):
+    def return_library_item(self, library: Library, library_item: LibraryItem, patron_id: str):
         """
         Handles the return process of a library item by a patron.
 

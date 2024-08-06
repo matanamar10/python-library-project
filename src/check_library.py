@@ -1,7 +1,7 @@
 from controllers.library import Library
-from models.library_items.books.book import Book
-from models.patrons.students import Student
-from models.patrons.teacher import Teacher
+from models.entities.library_items import Book
+from models.entities.patrons.students.students import Student
+from models.entities.patrons import Teacher
 from controllers.management.borrowing_department import BorrowingDepartment
 
 

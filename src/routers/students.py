@@ -1,7 +1,7 @@
 # students.py is a file which represents the students - type of actually patron.
 from typing import ClassVar
 
-from models.patrons.patron import Patron
+from models.entities.patrons.patron import Patron
 from pydantic import Field
 
 """

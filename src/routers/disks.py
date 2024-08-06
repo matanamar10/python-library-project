@@ -1,6 +1,6 @@
 # disks.py
 from pydantic import Field
-from models.library_items.items import LibraryItem
+from models.entities.library_items.items import LibraryItem
 
 """
 The Disk class inherits from LibraryItem and represents disks in the library_system.

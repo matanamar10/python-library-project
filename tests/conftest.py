@@ -1,7 +1,7 @@
 import pytest
 from controllers.library import Library
-from models.patrons.students import Student
-from models.library_items.books.book import Book
+from models.entities.patrons.students.students import Student
+from models.entities.library_items import Book
 from mongodb.mongo_setup import connect_to_mongodb, disconnect_from_mongodb
 
 
