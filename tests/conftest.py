@@ -1,8 +1,8 @@
 import pytest
-from controllers.library import Library
-from models.entities.patrons.students.students import Student
-from models.entities.library_items import Book
-from mongodb.mongo_setup import connect_to_mongodb, disconnect_from_mongodb
+from src.controllers import Library
+from src.models import Student
+from src.models import Book
+from src.mongodb.mongo_setup import connect_to_mongodb, disconnect_from_mongodb
 
 
 @pytest.fixture(scope="session", autouse=True)

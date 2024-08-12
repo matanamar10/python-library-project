@@ -1,11 +1,11 @@
-from models.entities.library_items import Book
-from models.entities.library_items.disks.disks import Disk
-from models.entities.library_items import LibraryItem  # Your existing Pydantic model
-from models.entities.patrons import Patron
-from mongodb.mongodb_models.book_model import BookDocument
-from mongodb.mongodb_models.disk_model import DiskDocument
-from mongodb.mongodb_models.library_item_model import LibraryItemDocument
-from mongodb.mongodb_models.patron_model import PatronDocument
+from src.models.entities.library_items.books.book import Book
+from src.models.entities.library_items.disks.disks import Disk
+from src.models.entities.library_items.items import LibraryItem  # Your existing Pydantic model
+from src.models.entities.patrons.patron import Patron
+from src.mongodb.mongodb_models.book_model import BookDocument
+from src.mongodb.mongodb_models.disk_model import DiskDocument
+from src.mongodb.mongodb_models.library_item_model import LibraryItemDocument
+from src.mongodb.mongodb_models.patron_model import PatronDocument
 
 
 def item_pydantic_to_mongoengine(item: LibraryItem) -> LibraryItemDocument:

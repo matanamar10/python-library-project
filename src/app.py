@@ -1,9 +1,11 @@
 # src/app.py
 
 from fastapi import FastAPI
-from controllers.library import Library
-from controllers.management.borrowing_department import BorrowingDepartment
-from src.routers import borrowing_department
+
+from src.controllers.library import Library
+from src.controllers.management.borrowing_department import BorrowingDepartment
+from src.routers.borrowing_department.borrowing_department import borrowing_department_router
+from src.routers.library.library import library_router
 
 
 def create_app(library_name: str) -> FastAPI:
@@ -15,8 +17,7 @@ def create_app(library_name: str) -> FastAPI:
     app.state.borrowing_department = BorrowingDepartment()
 
     # Include routers
-    app.include_router(patrons.patrons_router, prefix="/patrons", tags=["Patrons"])
-    app.include_router(library_items.library_items_router, prefix="/items", tags=["Items"])
-    app.include_router(borrowing_department.borrowing_department_router, prefix="/borrowing", tags=["Borrowing"])
+    app.include_router(library_router, prefix="/library")
+    app.include_router(borrowing_department_router, prefix="/borrowing")
 
     return app

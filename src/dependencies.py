@@ -1,8 +1,8 @@
 # src/dependencies.py
 
 from fastapi import Request
-from controllers.library import Library
-from controllers.management.borrowing_department import BorrowingDepartment
+from src.controllers.library import Library
+from src.controllers.management.borrowing_department import BorrowingDepartment
 
 
 def get_library(request: Request) -> Library:

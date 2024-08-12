@@ -2,7 +2,7 @@ import logging
 
 from src.app import create_app
 from src.env_utils import MongoDBSettings
-from mongodb.mongo_setup import connect_to_mongodb, disconnect_from_mongodb
+from src.mongodb.mongo_setup import connect_to_mongodb, disconnect_from_mongodb
 from utils.custom_library_errors import *
 import uvicorn
 
