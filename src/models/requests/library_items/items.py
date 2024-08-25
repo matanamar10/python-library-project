@@ -44,5 +44,5 @@ class SearchItemsRequest(BaseModel):
     library_item_isbn: Optional[str] = None
 
 
-class RemoveItemRequest(BaseModel):
-    library_item_isbn: str = Field(Field(..., pattern=r'^\d{9}$'))
+class ItemRequest(BaseModel):
+    item_isbn: str = Field(Field(..., pattern=r'^\d{9}$'))

@@ -14,7 +14,7 @@ Attributes:
 """
 
 
-class PatronRequest(BaseModel):
+class LibraryPatronRequest(BaseModel):
     name: str = Field(..., max_length=60)
     patron_id: str = Field(..., pattern=r'^\d{9}$')
     patron_items: Dict[str, Optional[datetime]] = {}
@@ -36,5 +36,5 @@ class AddPatronsRequest(BaseModel):
     patrons_to_add: List[Patron]
 
 
-class RemovePatronsRequest(BaseModel):
-    patrons_to_remove: List[Patron]
+class PatronRequest(BaseModel):
+    patron_id: str = Field(..., pattern=r'^\d{9}$')

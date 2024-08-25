@@ -3,7 +3,7 @@ import logging
 from src.controllers.controllers_manager import ControllersManager
 from src.models.entities.library_items.items import LibraryItem
 from src.models.entities.patrons.patron import Patron
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Dict, List, Optional
 from utils.utils import patron_pydantic_to_mongoengine, item_pydantic_to_mongoengine
 from utils.custom_library_errors import *
@@ -67,20 +67,20 @@ class Library(BaseModel):
             self.controllers_manager.patron_repo.insert_document(patron_document)
             logging.info(f"The patron {patron.name} with ID {patron.patron_id} was added to the library")
 
-    def remove_patrons_from_the_library(self, patrons_to_remove: List[Patron]):
+    def remove_patrons_from_the_library(self, patron_id: str = Field(..., pattern=r'^\d{9}$')):
         """
         Remove patrons from the library system.
 
         Args:
             patrons_to_remove (List[Patron]): List of patrons to remove.
+            :param patron_id:
         """
 
-        for patron in patrons_to_remove:
-            if patron.patron_id not in self.patrons:
-                raise PatronNotFoundError(patron.patron_id)
-            del self.patrons[patron.patron_id]
-            self.controllers_manager.patron_repo.delete_document({'patron_id': patron.patron_id})
-            logging.info(f"The patron {patron.patron_id} was removed from the library")
+        if patron_id not in self.patrons.keys():
+            raise PatronNotFoundError(patron_id)
+        del self.patrons[patron_id]
+        self.controllers_manager.patron_repo.delete_document({'patron_id': patron_id})
+        logging.info(f"The patron {patron_id} was removed from the library")
 
     def search_library_items(self, library_item_title=None, library_item_isbn=None):
         """
@@ -101,7 +101,7 @@ class Library(BaseModel):
         logging.info(f"Filter matches: {results}")
         return results
 
-    def remove_library_item_from_the_library(self, library_item_isbn: str):
+    def remove_library_item_from_the_library(self, library_item_isbn: str = Field(..., pattern=r'^\d{9}$')):
         """
         Remove an item from the library system by ISBN.
 
