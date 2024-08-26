@@ -1,6 +1,6 @@
 # routers/borrowing_department.py
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from src.models.responses.library_items.items import LibraryItemStatusResponse
 from src.models.requests.library_items.items import BorrowRequest
 from src.dependencies import get_library, get_borrowing_department
