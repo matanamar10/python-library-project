@@ -5,7 +5,7 @@ from datetime import datetime
 from src.dal.dal import LibraryItemRepository, PatronRepository, BillRepository
 from src.mongodb.mongodb_models.library_item_model import LibraryItemDocument
 from src.mongodb.mongodb_models.patron_model import PatronDocument
-from src.mongodb.mongodb_models.bills_model import Bill
+from src.mongodb.mongodb_models.bills_model import BillDocument
 
 
 class MongoLibraryItemRepository(LibraryItemRepository):
@@ -95,7 +95,7 @@ class MongoBillRepository(BillRepository):
             patron_id (str): The ID of the patron.
             amount (float): The amount of the bill.
         """
-        bill = Bill(patron_id=patron_id, amount=amount)
+        bill = BillDocument(patron_id=patron_id, amount=amount)
         bill.save()
 
     def update_bill(self, patron_id: str, amount: float) -> None:
@@ -106,7 +106,7 @@ class MongoBillRepository(BillRepository):
             patron_id (str): The ID of the patron.
             amount (float): The new amount for the bill.
         """
-        bill = Bill.objects(patron_id=patron_id).first()
+        bill = BillDocument.objects(patron_id=patron_id).first()
         if bill:
             bill.update(set__amount=amount)
 
@@ -117,4 +117,4 @@ class MongoBillRepository(BillRepository):
         Args:
             patron_id (str): The ID of the patron.
         """
-        Bill.objects(patron_id=patron_id).delete()
+        BillDocument.objects(patron_id=patron_id).delete()

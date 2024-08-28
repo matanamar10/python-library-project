@@ -48,6 +48,6 @@ def patron_pydantic_to_mongoengine(patron: Patron) -> PatronDocument:
 def patron_mongoengine_to_pydantic(patron_document: PatronDocument) -> Patron:
     return Patron(
         name=patron_document.name,
-        patron_id=patron_document.patron_id,
-        patron_items=patron_document.patron_items
+        patron_id=patron_document.id,
+        patron_items=patron_document.items
     )

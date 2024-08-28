@@ -10,10 +10,9 @@ borrowing_department_router = APIRouter()
 
 
 @borrowing_department_router.patch("/return", response_model=LibraryPatronStatusResponse, tags=["Borrowing Department"])
-def return_item(borrow_request: BorrowRequest, library=Depends(get_library),
+def return_item(borrow_request: BorrowRequest,
                 borrowing_department=Depends(get_borrowing_department)):
-    patron = borrowing_department.return_library_item(
-        library=library,
+    patron = borrowing_department.return_item(
         library_item=borrow_request.library_item,
         patron_id=borrow_request.patron_id
     )
@@ -24,10 +23,9 @@ def return_item(borrow_request: BorrowRequest, library=Depends(get_library),
 
 
 @borrowing_department_router.patch("/borrow", response_model=LibraryItemStatusResponse, tags=["Borrowing Department"])
-def borrow_item(borrow_request: BorrowRequest, library=Depends(get_library),
+def borrow_item(borrow_request: BorrowRequest,
                 borrowing_department=Depends(get_borrowing_department)):
     item = borrowing_department.borrow_library_item(
-        library=library,
         library_item=borrow_request.library_item,
         patron_id=borrow_request.patron_id
     )

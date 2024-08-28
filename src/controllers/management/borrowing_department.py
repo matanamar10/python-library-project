@@ -3,15 +3,19 @@ from datetime import datetime
 from src.controllers.management.finance import calculate_bill
 from src.controllers.library import Library
 from src.models.entities.library_items.items import LibraryItem
+from src.mongodb.mongodb_models.bills_model import BillDocument
+from src.mongodb.mongodb_models.library_item_model import LibraryItemDocument
+from src.mongodb.mongodb_models.patron_model import PatronDocument
 from utils.custom_library_errors import *
 from src.controllers.controllers_manager import ControllersManager
+from utils.utils import patron_mongoengine_to_pydantic
 
 
 class BorrowingDepartment:
     def __init__(self):
         self.controller_manager = ControllersManager()
 
-    def return_library_item(self, library: Library, library_item: LibraryItem, patron_id: str):
+    def return_item(self, library_item: LibraryItem, patron_id: str):
         """
         Handles the return process of a library item by a patron.
 
@@ -28,28 +32,28 @@ class BorrowingDepartment:
         - ValueError: If the patron does not exist, the item is not in the library, the item is not borrowed,
                       or if the patron has outstanding bills.
         """
-        patron = library.patrons.get(patron_id)
-        if not patron:
+        if PatronDocument.objects(patron_id=patron_id).count() == 0:
             raise PatronNotFoundError(patron_id)
-        if library_item.isbn not in library.library_items.keys():
+        if LibraryItemDocument.objects(isbn=library_item.isbn).count() == 0:
             raise LibraryItemNotFoundError(library_item.isbn)
-        if not library_item.is_borrowed:
-            raise LibraryItemAlreadyBorrowedError(library_item.isbn)
-
+        if not LibraryItemDocument.objects(isbn=library_item.isbn).first().is_borrowed:
+            raise BorrowedLibraryItemNotFound(library_item.isbn)
+        patron_document = PatronDocument.objects(patron_id=patron_id).first()
+        patron = patron_mongoengine_to_pydantic(patron_document)
         patron_calculated_bill = calculate_bill(patron=patron)
-        library.bills[patron_id] = patron_calculated_bill
-
-        if library.bills[patron_id] != 0:
+        bill_document = BillDocument.objects(patron_id=patron_id).first()
+        bill_document.patron_bill_sum = patron_calculated_bill
+        bill_document.save()
+        if bill_document.patron_bill_sum != 0:
             self.controller_manager.bill_repo.update_bill(patron_id, patron_calculated_bill)
             raise BillToPayError(patron_id)
         patron.remove_library_item_from_patron(library_item)
         library_item.is_borrowed = False  # The book is not borrowed anymore.
         self.controller_manager.patron_repo.return_item(patron_id, library_item.isbn)
         self.controller_manager.library_item_repo.update_item_status(library_item.isbn, False)
-
         logging.info(f"Library item {library_item.title} has been returned by patron {patron_id}")
 
-    def borrow_library_item(self, library: Library, library_item: LibraryItem, patron_id: str):
+    def borrow_item(self, library_item: LibraryItem, patron_id: str):
         """
         Handles the borrowing process of a library item by a patron.
 
@@ -65,14 +69,14 @@ class BorrowingDepartment:
         Raises:
         - ValueError: If the patron does not exist, the item is not in the library, or if the item is already borrowed.
         """
-        if patron_id not in library.patrons.keys():
+        if PatronDocument.objects(patron_id=patron_id).count() == 0:
             raise PatronNotFoundError(patron_id)
-        if library_item.isbn not in library.library_items.keys():
+        if LibraryItemDocument.objects(isbn=library_item.isbn).count() == 0:
             raise LibraryItemNotFoundError(library_item.isbn)
-        if library_item.is_borrowed:
+        if LibraryItemDocument.objects(isbn=library_item.isbn).first().is_borrowed:
             raise LibraryItemAlreadyBorrowedError(library_item.isbn)
-
-        patron = library.patrons[patron_id]
+        patron_document = PatronDocument.objects(patron_id=patron_id).first()
+        patron = patron_mongoengine_to_pydantic(patron_document)
         patron.add_library_item_to_patron(library_item=library_item)
         library_item.is_borrowed = True
         borrow_date = datetime.now()
