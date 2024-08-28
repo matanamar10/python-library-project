@@ -81,5 +81,4 @@ class BorrowingDepartment:
         borrow_date = datetime.now()
         self.controller_manager.patron_repo.borrow_item(patron_id, library_item.isbn, borrow_date)
         self.controller_manager.library_item_repo.update_item_status(library_item.isbn, True)
-
         logging.info(f"Library item {library_item.title} has been borrowed by patron {patron_id}")
