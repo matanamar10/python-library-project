@@ -1,6 +1,4 @@
 from pydantic import BaseModel, Field
-from typing import Dict, Optional
-from datetime import datetime
 from src.models.entities.patrons.patron import Patron
 
 """
@@ -19,4 +17,4 @@ class PatronResponse(BaseModel):
 
 class LibraryPatronStatusResponse(BaseModel):
     message: str = Field(..., description="A message about the borrow or return status of library item")
-    patron: PatronResponse
+    patron_id: str = Field(..., pattern=r'^\d{9}$')
