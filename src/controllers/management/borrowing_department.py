@@ -1,7 +1,6 @@
 import logging
 from datetime import datetime
 from src.controllers.management.finance import calculate_bill
-from src.controllers.library import Library
 from src.models.entities.library_items.items import LibraryItem
 from src.mongodb.mongodb_models.bills_model import BillDocument
 from src.mongodb.mongodb_models.library_item_model import LibraryItemDocument
