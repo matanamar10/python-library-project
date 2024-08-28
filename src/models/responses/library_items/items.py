@@ -1,4 +1,5 @@
 # library_items.py
+from typing import List
 
 from pydantic import BaseModel, Field
 
@@ -21,3 +22,11 @@ class LibraryItemResponse(BaseModel):
 class LibraryItemStatusResponse(BaseModel):
     message: str = Field(..., description="A message about the borrow or return status of library item")
     item: LibraryItemResponse
+
+
+class NewItemsResponse(BaseModel):
+    message: str = Field(..., description="A message about the borrow or return status of library item")
+
+
+class NewPatronsResponse(BaseModel):
+    message: str = Field(..., description="A message about the borrow or return status of library item")

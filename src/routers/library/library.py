@@ -1,6 +1,7 @@
 from src.models.requests.patrons.patron import AddPatronsRequest, PatronRequest
 from fastapi import APIRouter, Depends
-from src.models.responses.library_items.items import LibraryItemStatusResponse, LibraryItemResponse
+from src.models.responses.library_items.items import LibraryItemStatusResponse, LibraryItemResponse, NewItemsResponse, \
+    NewPatronsResponse
 from src.models.requests.library_items.items import AddItemRequest, SearchItemsRequest, ItemRequest
 from src.dependencies import get_library
 from src.models.responses.patrons.patron import LibraryPatronStatusResponse
@@ -8,21 +9,19 @@ from src.models.responses.patrons.patron import LibraryPatronStatusResponse
 library_router = APIRouter()
 
 
-@library_router.post(path="/items", response_model=LibraryItemStatusResponse, tags=["Library Items"])
+@library_router.post(path="/items", response_model=NewItemsResponse, tags=["Library Items"])
 def add_library_item(add_new_item_request: AddItemRequest, library=Depends(get_library)):
-    items = library.add_new_library_items_to_the_library(new_library_items=add_new_item_request.library_items)
+    library.add_new_library_items_to_the_library(new_library_items=add_new_item_request.library_items)
     return {
-        "message": "The new items successfully added",
-        "item": {"item": items[0]}  # Assuming adding multiple items, return the first one
+        "message": "The new items successfully added"
     }
 
 
-@library_router.post(path="/patrons", response_model=LibraryPatronStatusResponse, tags=["Library Patrons"])
+@library_router.post(path="/patrons", response_model=NewPatronsResponse, tags=["Library Patrons"])
 def add_patrons(add_new_patrons_request: AddPatronsRequest, library=Depends(get_library)):
     patrons = library.add_new_patron_to_the_library(patrons_to_add=add_new_patrons_request.patrons_to_add)
     return {
-        "message": "The new patrons successfully added",
-        "patron": {"patron": patrons[0]}  # Assuming adding multiple patrons, return the first one
+        "message": "The new patrons successfully added"
     }
 
 

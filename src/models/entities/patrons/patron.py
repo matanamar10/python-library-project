@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import BaseModel, Field, ValidationError, validator, field_validator
 from typing import Dict, Optional
 from datetime import datetime
 import logging
@@ -17,6 +17,12 @@ class Patron(BaseModel):
     name: str = Field(..., max_length=60)
     patron_id: str = Field(..., pattern=r'^\d{9}$')
     patron_items: Dict[str, Optional[datetime]] = {}
+
+    @field_validator('patron_items', mode='before')
+    def check_patron_items_empty(cls, v):
+        if v:
+            raise ValueError("patron_items must be an empty dictionary upon creation")
+        return {}
 
     def add_library_item_to_patron(self, library_item=None):
         """
