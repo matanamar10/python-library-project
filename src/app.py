@@ -23,7 +23,6 @@ def create_app(library_name: str) -> FastAPI:
     # Initialize and store the Library instance in the app's state
     app.state.library = Library(name=library_name)
     app.state.borrowing_department = BorrowingDepartment()
-
     # Include routers
     app.include_router(library_router, prefix="/library")
     app.include_router(borrowing_department_router, prefix="/borrowing")
