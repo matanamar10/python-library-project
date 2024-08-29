@@ -24,7 +24,3 @@ class LibraryItemStatusResponse(BaseModel):
 
 class NewItemsResponse(BaseModel):
     message: str = Field(..., description="A message about the borrow or return status of library item")
-
-
-class NewPatronsResponse(BaseModel):
-    message: str = Field(..., description="A message about the borrow or return status of library item")

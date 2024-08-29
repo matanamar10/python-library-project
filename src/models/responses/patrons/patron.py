@@ -18,3 +18,7 @@ class PatronResponse(BaseModel):
 class LibraryPatronStatusResponse(BaseModel):
     message: str = Field(..., description="A message about the borrow or return status of library item")
     patron_id: str = Field(..., pattern=r'^\d{9}$')
+
+
+class NewPatronsResponse(BaseModel):
+    message: str = Field(..., description="A message about the borrow or return status of library item")

@@ -10,7 +10,7 @@ library_router = APIRouter()
 
 
 @library_router.post(path="/items", response_model=NewItemsResponse, tags=["Library Items"])
-def add_library_item(add_new_item_request: AddItemRequest, library=Depends(get_library)):
+def add_item(add_new_item_request: AddItemRequest, library=Depends(get_library)):
     """
     Add new items to the library.
 
@@ -24,7 +24,7 @@ def add_library_item(add_new_item_request: AddItemRequest, library=Depends(get_l
     Returns:
         dict: A message confirming the successful addition of the new items.
     """
-    library.add_new_library_items_to_the_library(new_library_items=add_new_item_request.library_items)
+    library.add_items(new_library_items=add_new_item_request.library_items)
     return {
         "message": "The new items successfully added"
     }
@@ -52,7 +52,7 @@ def add_patrons(add_new_patrons_request: AddPatronsRequest, library=Depends(get_
 
 
 @library_router.delete(path="/patrons/{id}", response_model=LibraryPatronStatusResponse, tags=["Library Patrons"])
-def delete_patrons(patron_id: str, library=Depends(get_library)):
+def delete_patron(patron_id: str, library=Depends(get_library)):
     """
     Delete a patron from the library.
 
@@ -65,7 +65,7 @@ def delete_patrons(patron_id: str, library=Depends(get_library)):
     Returns:
         dict: A message confirming the successful removal of the patron, along with the patron's ID.
     """
-    library.remove_patrons_from_the_library(patron_id=patron_id)
+    library.remove_patron(patron_id=patron_id)
     return {
         "message": "Patron successfully removed",
         "patron id": patron_id
@@ -73,7 +73,7 @@ def delete_patrons(patron_id: str, library=Depends(get_library)):
 
 
 @library_router.delete(path="/items/{item_isbn}", response_model=LibraryItemStatusResponse, tags=["Library Items"])
-def delete_items(item_isbn: str, library=Depends(get_library)):
+def delete_item(item_isbn: str, library=Depends(get_library)):
     """
     Delete an item from the library.
 
@@ -86,7 +86,7 @@ def delete_items(item_isbn: str, library=Depends(get_library)):
     Returns:
         dict: A message confirming the successful removal of the item, along with the item's ISBN.
     """
-    library.remove_items_from_the_library(item_isbn_to_remove=item_isbn)
+    library.remove_item(item_isbn_to_remove=item_isbn)
     return {
         "message": "Item successfully removed from the library",
         "isbn": item_isbn
@@ -94,7 +94,7 @@ def delete_items(item_isbn: str, library=Depends(get_library)):
 
 
 @library_router.get(path="/items/{isbn}", response_model=LibraryItemResponse, tags=["Library Items"])
-def get_library_item(item_isbn: str, library=Depends(get_library)):
+def get_item(item_isbn: str, library=Depends(get_library)):
     """
     Get details of a library item.
 
@@ -107,12 +107,12 @@ def get_library_item(item_isbn: str, library=Depends(get_library)):
     Returns:
         dict: A dictionary containing the details of the requested library item.
     """
-    item = library.library_items[item_isbn]
+    item = library.items[item_isbn]
     return {"item": item}
 
 
 @library_router.get(path="/patrons/{id}", response_model=PatronResponse, tags=["Library Patrons"])
-def get_library_patron(patron_id: str, library=Depends(get_library)):
+def get_patron(patron_id: str, library=Depends(get_library)):
     """
     Get details of a library patron.
 
