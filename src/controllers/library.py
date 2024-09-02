@@ -82,25 +82,25 @@ class Library(BaseModel):
         self.controllers_manager.patron_repo.delete_document({'patron_id': patron_id})
         logging.info(f"The patron {patron_id} was removed from the library")
 
-    def search_items(self, library_item_title=None, library_item_isbn=None):
+    def search_items(self, title=None, isbn=None):
         """
         Search for library items by title or ISBN.
 
         Args:
-            library_item_title (str): Title to filter by.
-            library_item_isbn (str): ISBN to filter by.
+            title (str): Title to filter by.
+            isbn (str): ISBN to filter by.
 
         Returns:
             List[str]: List of matching item titles.
         """
-        results = []
-        for library_item in LibraryItemDocument.objects():
-            if (library_item_title is None or library_item_title in library_item.title) or \
-                    (library_item_isbn is None or library_item_isbn == library_item.isbn):
-                results.append(library_item.title)
-        logging.info(f"Filter matches: {results}")
-        return results
+        query = {}
+        if title:
+            query['title'] = {'$regex': title, '$options': 'i'}
+        if isbn:
+            query['isbn'] = isbn
 
+        items = list(collection.find(query))
+        return items
     def remove_item(self, library_item_isbn: str = Field(..., pattern=r'^\d{9}$')):
         """
         Remove an item from the library system by ISBN.

@@ -38,11 +38,5 @@ class BorrowRequest(BaseModel):
 class AddItemRequest(BaseModel):
     library_items: List[LibraryItem]
 
-
-class SearchItemsRequest(BaseModel):
-    library_item_title: Optional[str] = None
-    library_item_isbn: Optional[str] = None
-
-
 class ItemRequest(BaseModel):
     item_isbn: str = Field(Field(..., pattern=r'^\d{9}$'))

@@ -1,8 +1,8 @@
 from src.models.requests.patrons.patron import AddPatronsRequest
 from fastapi import APIRouter, Depends
-from src.models.responses.library_items.items import LibraryItemStatusResponse, LibraryItemResponse, NewItemsResponse, \
-    NewPatronsResponse
-from src.models.requests.library_items.items import AddItemRequest
+from src.models.requests.library_items.items import *
+from src.models.responses.patrons.patron import *
+from src.models.responses.library_items.items import *
 from src.dependencies import get_library
 from src.models.responses.patrons.patron import LibraryPatronStatusResponse, PatronResponse
 
@@ -127,3 +127,17 @@ def get_patron(patron_id: str, library=Depends(get_library)):
     """
     patron = library.patrons[patron_id]
     return {"patron": patron}
+
+@library_router.get(path=f"/items/", response_model=List[dict], tags=["Library Items"])
+def search_library_items(
+        title: Optional[str] = None,
+        isbn: Optional[str] = None
+):
+    query = {}
+    if title:
+        query['title'] = {'$regex': title, '$options': 'i'}
+    if isbn:
+        query['isbn'] = isbn
+
+    items = list(collection.find(query))
+    return items
