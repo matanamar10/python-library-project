@@ -101,6 +101,7 @@ class Library(BaseModel):
 
         items = list(collection.find(query))
         return items
+
     def remove_item(self, library_item_isbn: str = Field(..., pattern=r'^\d{9}$')):
         """
         Remove an item from the library system by ISBN.
@@ -112,6 +113,7 @@ class Library(BaseModel):
             raise LibraryItemNotFoundError(
                 f"The library item with ISBN {library_item_isbn} does not exist in the library")
         if LibraryItemDocument.objects(isbn=library_item_isbn).first().is_borrowed:
-            raise ValueError(f"The library item with ISBN {library_item_isbn} is borrowed and cannot be removed")
+            raise LibraryItemAlreadyBorrowedError(
+                f"The library item with ISBN {library_item_isbn} is borrowed and cannot be removed")
         self.controllers_manager.library_item_repo.delete_document({'isbn': library_item_isbn})
         logging.info(f"The item {library_item_isbn} was removed from the library")
