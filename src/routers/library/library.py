@@ -127,17 +127,3 @@ def get_patron(patron_id: str, library=Depends(get_library)):
     """
     patron = library.patrons[patron_id]
     return {"patron": patron}
-
-@library_router.get(path=f"/items/", response_model=List[dict], tags=["Library Items"])
-def search_library_items(
-        title: Optional[str] = None,
-        isbn: Optional[str] = None
-):
-    query = {}
-    if title:
-        query['title'] = {'$regex': title, '$options': 'i'}
-    if isbn:
-        query['isbn'] = isbn
-
-    items = list(collection.find(query))
-    return items

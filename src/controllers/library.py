@@ -110,8 +110,7 @@ class Library(BaseModel):
             library_item_isbn (str): ISBN of the item to remove.
         """
         if LibraryItemDocument.objects(isbn=library_item_isbn).count() == 0:
-            raise LibraryItemNotFoundError(
-                f"The library item with ISBN {library_item_isbn} does not exist in the library")
+            raise LibraryItemNotFoundError(item_isbn=library_item_isbn)
         if LibraryItemDocument.objects(isbn=library_item_isbn).first().is_borrowed:
             raise LibraryItemAlreadyBorrowedError(
                 f"The library item with ISBN {library_item_isbn} is borrowed and cannot be removed")
