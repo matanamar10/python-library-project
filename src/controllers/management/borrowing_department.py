@@ -31,11 +31,11 @@ class BorrowingDepartment:
         - ValueError: If the patron does not exist, the item is not in the library, the item is not borrowed,
                       or if the patron has outstanding bills.
         """
-        if PatronDocument.objects(patron_id=patron_id).count() == 0:
+        if not self.controller_manager.patron_repo.patron_exists(patron_id):
             raise PatronNotFoundError(patron_id)
-        if LibraryItemDocument.objects(isbn=library_item.isbn).count() == 0:
+        if not self.controller_manager.library_item_repo.item_exists(library_item.isbn):
             raise LibraryItemNotFoundError(library_item.isbn)
-        if not LibraryItemDocument.objects(isbn=library_item.isbn).first().is_borrowed:
+        if not self.controller_manager.library_item_repo.is_item_borrowed(library_item.isbn):
             raise BorrowedLibraryItemNotFound(library_item.isbn)
         patron_document = PatronDocument.objects(patron_id=patron_id).first()
         patron = patron_mongoengine_to_pydantic(patron_document)
@@ -68,11 +68,11 @@ class BorrowingDepartment:
         Raises:
         - ValueError: If the patron does not exist, the item is not in the library, or if the item is already borrowed.
         """
-        if PatronDocument.objects(patron_id=patron_id).count() == 0:
+        if self.controller_manager.patron_repo.patron_exists(patron_id):
             raise PatronNotFoundError(patron_id)
-        if LibraryItemDocument.objects(isbn=library_item.isbn).count() == 0:
+        if not self.controller_manager.library_item_repo.item_exists(isbn=library_item.isbn):
             raise LibraryItemNotFoundError(library_item.isbn)
-        if LibraryItemDocument.objects(isbn=library_item.isbn).first().is_borrowed:
+        if self.controller_manager.library_item_repo.is_item_borrowed(isbn=library_item.isbn):
             raise LibraryItemAlreadyBorrowedError(library_item.isbn)
         patron_document = PatronDocument.objects(patron_id=patron_id).first()
         patron = patron_mongoengine_to_pydantic(patron_document)

@@ -102,8 +102,9 @@ class PatronRepository(ABC):
         pass
 
     @abstractmethod
-    def patron_exists(self, isbn: str) -> bool:
+    def patron_exists(self, patron_id: str) -> bool:
         pass
+
 
 class BillRepository(ABC):
     @abstractmethod

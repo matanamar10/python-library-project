@@ -6,8 +6,6 @@ from src.models.entities.patrons.patron import Patron
 from pydantic import BaseModel, Field
 from typing import Dict, List, Optional
 
-from src.mongodb.mongodb_models.library_item_model import LibraryItemDocument
-from src.mongodb.mongodb_models.patron_model import PatronDocument
 from utils.utils import patron_pydantic_to_mongoengine, item_pydantic_to_mongoengine
 from utils.custom_library_errors import *
 
