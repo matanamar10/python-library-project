@@ -40,6 +40,22 @@ class LibraryItemRepository(ABC):
         """
         pass
 
+    @abstractmethod
+    def item_exists(self, isbn: str) -> bool:
+        """
+        Check if a library item exists by its ISBN.
+
+        Args:
+            isbn (str): The ISBN of the library item.
+
+        Returns:
+            bool: True if the item exists, False otherwise.
+        """
+        pass
+
+    def is_item_borrowed(self, isbn: str) -> bool:
+        pass
+
 
 class PatronRepository(ABC):
     @abstractmethod
@@ -85,6 +101,9 @@ class PatronRepository(ABC):
         """
         pass
 
+    @abstractmethod
+    def patron_exists(self, isbn: str) -> bool:
+        pass
 
 class BillRepository(ABC):
     @abstractmethod

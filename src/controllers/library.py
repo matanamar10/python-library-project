@@ -45,7 +45,7 @@ class Library(BaseModel):
             new_library_items (List[LibraryItem]): List of library items to add.
         """
         for new_library_item in new_library_items:
-            if LibraryItemDocument.objects(isbn=new_library_item.isbn).count() > 0:
+            if self.controllers_manager.library_item_repo.item_exists(new_library_item.isbn):
                 raise ItemAlreadyExistsError(new_library_item.isbn)
             new_library_item_document = item_pydantic_to_mongoengine(new_library_item)
             self.controllers_manager.library_item_repo.insert_document(new_library_item_document)
@@ -62,7 +62,7 @@ class Library(BaseModel):
             patrons_to_add (List[Patron]): List of patrons to add.
         """
         for patron in patrons_to_add:
-            if PatronDocument.objects(patron_id=patron.patron_id).count() > 0:
+            if self.controllers_manager.patron_repo.patron_exists(patron.id):
                 raise PatronAlreadyExistsError(patron.patron_id)
             patron_document = patron_pydantic_to_mongoengine(patron)
             self.controllers_manager.patron_repo.insert_document(patron_document)
@@ -77,7 +77,7 @@ class Library(BaseModel):
             :param patron_id:
         """
 
-        if PatronDocument.objects(patron_id=patron_id).count() == 0:
+        if self.controllers_manager.patron_repo.patron_exists(patron_id):
             raise PatronNotFoundError(patron_id)
         self.controllers_manager.patron_repo.delete_document({'patron_id': patron_id})
         logging.info(f"The patron {patron_id} was removed from the library")
@@ -109,9 +109,9 @@ class Library(BaseModel):
         Args:
             library_item_isbn (str): ISBN of the item to remove.
         """
-        if LibraryItemDocument.objects(isbn=library_item_isbn).count() == 0:
+        if not self.controllers_manager.library_item_repo.item_exists(library_item_isbn):
             raise LibraryItemNotFoundError(item_isbn=library_item_isbn)
-        if LibraryItemDocument.objects(isbn=library_item_isbn).first().is_borrowed:
+        if self.controllers_manager.library_item_repo.is_item_borrowed(isbn=library_item_isbn):
             raise LibraryItemAlreadyBorrowedError(
                 f"The library item with ISBN {library_item_isbn} is borrowed and cannot be removed")
         self.controllers_manager.library_item_repo.delete_document({'isbn': library_item_isbn})

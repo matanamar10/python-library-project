@@ -39,6 +39,12 @@ class MongoLibraryItemRepository(LibraryItemRepository):
         """
         LibraryItemDocument.objects(**query).delete()
 
+    def item_exists(self, isbn: str) -> bool:
+        return LibraryItemDocument.objects(isbn=isbn).count() > 0
+
+    def is_item_borrowed(self, isbn: str) -> bool:
+        return LibraryItemDocument.objects(isbn=isbn).first().is_borrowed
+
 
 class MongoPatronRepository(PatronRepository):
     def return_item(self, patron_id: str, isbn: str):
@@ -84,6 +90,9 @@ class MongoPatronRepository(PatronRepository):
             query (dict): The query to find the document to delete.
         """
         PatronDocument.objects(**query).delete()
+
+    def patron_exists(self, isbn: str) -> bool:
+        return LibraryItemDocument.objects(isbn=isbn).count() > 0
 
 
 class MongoBillRepository(BillRepository):
