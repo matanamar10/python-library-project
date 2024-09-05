@@ -27,3 +27,5 @@ class LibraryItemStatusResponse(BaseModel):
 class NewItemsResponse(BaseModel):
     message: str = Field(...,
                          description="A message confirming the successful addition of new items to the library collection")
+
+
