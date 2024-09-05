@@ -35,7 +35,7 @@ class BorrowRequest(BaseModel):
     patron_id: str = Field(Field(..., pattern=r'^\d{9}$'))
 
 
-class AddItemRequest(BaseModel):
+class AddItemsRequest(BaseModel):
     library_items: List[LibraryItem]
 
 class ItemRequest(BaseModel):

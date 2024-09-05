@@ -1,4 +1,5 @@
 # library_items.py
+
 from pydantic import BaseModel, Field
 
 from src.models.entities.library_items.items import LibraryItem
@@ -18,9 +19,11 @@ class LibraryItemResponse(BaseModel):
 
 
 class LibraryItemStatusResponse(BaseModel):
-    message: str = Field(..., description="A message about the borrow or return status of library item")
+    message: str = Field(...,
+                         description="A descriptive message about the status of borrowing or returning a specific library item, including the item's ISBN.")
     isbn: str = Field(..., pattern=r'^\d{9}$')
 
 
 class NewItemsResponse(BaseModel):
-    message: str = Field(..., description="A message about the borrow or return status of library item")
+    message: str = Field(...,
+                         description="A message confirming the successful addition of new items to the library collection")

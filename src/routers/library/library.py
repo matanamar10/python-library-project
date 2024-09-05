@@ -12,7 +12,7 @@ library_router = APIRouter()
 
 
 @library_router.post(path="/items", response_model=NewItemsResponse, tags=["Library Items"])
-def add_item(add_new_item_request: AddItemRequest, library=Depends(get_library)):
+def add_items(add_new_items_request: AddItemsRequest, library=Depends(get_library)):
     """
     Add new items to the library.
 
@@ -20,16 +20,16 @@ def add_item(add_new_item_request: AddItemRequest, library=Depends(get_library))
     The items to be added are provided in the request body.
 
     Args:
-        add_new_item_request (AddItemRequest): A request object containing the details of the items to be added.
+        add_new_items_request (AddItemsRequest): A request object containing the details of the items to be added.
         library: The library instance, injected via dependency.
 
     Returns:
         dict: A message confirming the successful addition of the new items.
     """
-    library.add_items(new_library_items=add_new_item_request.library_items)
-    return {
-        "message": "The new items successfully added"
-    }
+    library.add_items(new_library_items=add_new_items_request.library_items)
+    return NewItemsResponse(
+        message=f"New items {add_new_items_request.library_items} have been successfully added to the library collection.",
+    )
 
 
 @library_router.post(path="/patrons", response_model=NewPatronsResponse, tags=["Library Patrons"])
@@ -49,7 +49,7 @@ def add_patrons(add_new_patrons_request: AddPatronsRequest, library=Depends(get_
     """
     library.add_new_patron_to_the_library(patrons_to_add=add_new_patrons_request.patrons_to_add)
     return {
-        "message": "The new patrons successfully added"
+        "message": f"The new patrons {add_new_patrons_request.patrons_to_add} successfully added"
     }
 
 
