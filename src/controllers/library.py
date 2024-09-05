@@ -6,6 +6,7 @@ from src.models.entities.patrons.patron import Patron
 from pydantic import BaseModel, Field
 from typing import Dict, List, Optional
 
+from src.mongodb.mongodb_models.library_item_model import LibraryItemDocument
 from utils.utils import patron_pydantic_to_mongoengine, item_pydantic_to_mongoengine
 from utils.custom_library_errors import *
 
@@ -80,25 +81,6 @@ class Library(BaseModel):
         self.controllers_manager.patron_repo.delete_document({'patron_id': patron_id})
         logging.info(f"The patron {patron_id} was removed from the library")
 
-    def search_items(self, title=None, isbn=None):
-        """
-        Search for library items by title or ISBN.
-
-        Args:
-            title (str): Title to filter by.
-            isbn (str): ISBN to filter by.
-
-        Returns:
-            List[str]: List of matching item titles.
-        """
-        query = {}
-        if title:
-            query['title'] = {'$regex': title, '$options': 'i'}
-        if isbn:
-            query['isbn'] = isbn
-
-        items = list(collection.find(query))
-        return items
 
     def remove_item(self, library_item_isbn: str = Field(..., pattern=r'^\d{9}$')):
         """
@@ -114,3 +96,15 @@ class Library(BaseModel):
                 f"The library item with ISBN {library_item_isbn} is borrowed and cannot be removed")
         self.controllers_manager.library_item_repo.delete_document({'isbn': library_item_isbn})
         logging.info(f"The item {library_item_isbn} was removed from the library")
+
+    def search_items(self, criteria: Dict[str, str]) -> List[LibraryItemDocument]:
+        """
+        Search for library items based on criteria.
+
+        Args:
+            criteria (Dict[str, str]): A dictionary with search criteria.
+
+        Returns:
+            List[LibraryItemDocument]: A list of matching library items.
+        """
+        return self.controllers_manager.library_item_repo.search_items(criteria)

@@ -1,7 +1,10 @@
 # mongodb/mongo_repository.py
 
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 from datetime import datetime
+
+from mongoengine import Q
+
 from src.dal.dal import LibraryItemRepository, PatronRepository, BillRepository
 from src.mongodb.mongodb_models.library_item_model import LibraryItemDocument
 from src.mongodb.mongodb_models.patron_model import PatronDocument
@@ -44,6 +47,17 @@ class MongoLibraryItemRepository(LibraryItemRepository):
 
     def is_item_borrowed(self, isbn: str) -> bool:
         return LibraryItemDocument.objects(isbn=isbn).first().is_borrowed
+
+    def search_items(self, query: Dict[str, Optional[str]]) -> List[LibraryItemDocument]:
+        mongo_query = Q()
+        if 'title' in query and query['title']:
+            mongo_query &= Q(title__icontains=query['title'])
+        if 'isbn' in query and query['isbn']:
+            mongo_query &= Q(isbn=query['isbn'])
+        if 'author' in query and query['author']:
+            mongo_query &= Q(author__icontains=query['author'])
+
+        return list(LibraryItemDocument.objects(mongo_query))
 
 
 class MongoPatronRepository(PatronRepository):

@@ -1,3 +1,5 @@
+from typing import Dict
+
 from src.models.requests.patrons.patron import AddPatronsRequest
 from fastapi import APIRouter, Depends
 from src.models.requests.library_items.items import *
@@ -127,3 +129,19 @@ def get_patron(patron_id: str, library=Depends(get_library)):
     """
     patron = library.patrons[patron_id]
     return {"patron": patron}
+
+
+@library_router.get("/search", response_model=List[LibraryItemResponse])
+def search_library_items(criteria: Dict[str, str], library=Depends(get_library)):
+    """
+    Search for library items based on criteria.
+
+    Args:
+        library: The library itself
+        criteria (Dict[str, str]): A dictionary with search criteria.
+
+    Returns:
+        List[LibraryItemResponse]: A list of matching library items.
+    """
+    items = library.search_items(criteria)
+    return items

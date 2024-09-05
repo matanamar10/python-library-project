@@ -1,7 +1,7 @@
 # dal/dal.py
 
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import Optional, Dict, List
 from datetime import datetime
 
 from src.mongodb.mongodb_models.library_item_model import LibraryItemDocument
@@ -56,6 +56,8 @@ class LibraryItemRepository(ABC):
     def is_item_borrowed(self, isbn: str) -> bool:
         pass
 
+    def search_items(self, query: Dict[str, Optional[str]]) -> List[LibraryItemDocument]:
+        pass
 
 class PatronRepository(ABC):
     @abstractmethod
