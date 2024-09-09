@@ -1,5 +1,7 @@
 # Define Patron document
-from mongoengine import Document, StringField, DictField, DateTimeField
+from beanie import Document
+from mongoengine import StringField, DictField, DateTimeField
+
 from src.env_utils import MongoDBSettings
 
 

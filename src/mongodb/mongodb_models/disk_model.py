@@ -1,7 +1,8 @@
 from mongoengine import StringField
+from pydantic import Field
 
 from src.mongodb.mongodb_models.library_item_model import LibraryItemDocument
 
 
 class DiskDocument(LibraryItemDocument):
-    disk_type = StringField(required=True, max_length=60)
+    disk_type: str = Field(..., max_length=60)
