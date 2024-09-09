@@ -1,5 +1,5 @@
 import pytest
-from controllers.management.borrowing_department import borrow_a_library_item, return_a_library_item
+from src.controllers.management import borrow_a_library_item, return_a_library_item
 
 
 def test_borrow_a_library_item_success(library, library_item, patron):

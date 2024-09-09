@@ -1,8 +1,8 @@
-from controllers.library import Library
-from models.library_items.books.book import Book
-from models.patrons.students import Student
-from models.patrons.teacher import Teacher
-from controllers.management.borrowing_department import BorrowingDepartment
+from src.controllers.library import Library
+from src.models.entities.library_items.books.book import Book
+from src.models.entities.patrons.students.students import Student
+from src.models.entities.patrons.teachers.teacher import Teacher
+from src.controllers.management.borrowing_department import BorrowingDepartment
 
 
 def check_library():
@@ -24,10 +24,10 @@ def check_library():
     my_library.add_new_library_items_to_the_library(books)
     my_library.add_new_patron_to_the_library(students)
 
-    borrowing_department.borrow_library_item(my_library, book1, student3.patron_id)
+    borrowing_department.borrow_item(book1, student3.id)
     my_library.add_new_patron_to_the_library(teachers)
 
-    borrowing_department.return_a_library_item(my_library, book1, student3.patron_id)
-    borrowing_department.borrow_library_item(my_library, book1, student3.patron_id)
+    borrowing_department.return_item(book1, student3.id)
+    borrowing_department.borrow_item(book1, student3.id)
 
     my_library.add_new_library_items_to_the_library(books)
