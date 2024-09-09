@@ -10,134 +10,74 @@ from src.mongodb.mongodb_models.library_item_model import LibraryItemDocument
 from src.mongodb.mongodb_models.patron_model import PatronDocument
 from src.mongodb.mongodb_models.bills_model import BillDocument
 
+from typing import Dict, List, Optional
+from src.mongodb.mongodb_models.library_item_model import LibraryItemDocument
 
-class MongoLibraryItemRepository(LibraryItemRepository):
-    def update_item_status(self, isbn: str, is_borrowed: bool) -> None:
-        """
-        Update the status of a library item identified by its ISBN.
 
-        Args:
-            isbn (str): The ISBN of the library item.
-            is_borrowed (bool): True if the item is borrowed, False if it is returned.
-        """
-        item = LibraryItemDocument.objects(isbn=isbn).first()
+class MongoLibraryItemRepository:
+    async def update_item_status(self, isbn: str, is_borrowed: bool) -> None:
+        item = await LibraryItemDocument.find_one(LibraryItemDocument.isbn == isbn)
         if item:
-            item.update(set__is_borrowed=is_borrowed)
+            item.is_borrowed = is_borrowed
+            await item.save()
 
-    def insert_document(self, document: LibraryItemDocument) -> None:
-        """
-        Insert a library item document into the database.
+    async def insert_document(self, document: LibraryItemDocument) -> None:
+        await document.insert()
 
-        Args:
-            document (LibraryItemDocument): The document to insert.
-        """
-        document.save()
+    async def delete_document(self, query: Dict[str, str]) -> None:
+        await LibraryItemDocument.find(query).delete()
 
-    def delete_document(self, query: Dict[str, Any]) -> None:
-        """
-        Delete a library item document from the database.
+    async def item_exists(self, isbn: str) -> bool:
+        return await LibraryItemDocument.find(LibraryItemDocument.isbn == isbn).count() > 0
 
-        Args:
-            query (dict): The query to find the document to delete.
-        """
-        LibraryItemDocument.objects(**query).delete()
+    async def is_item_borrowed(self, isbn: str) -> bool:
+        item = await LibraryItemDocument.find_one(LibraryItemDocument.isbn == isbn)
+        return item.is_borrowed if item else False
 
-    def item_exists(self, isbn: str) -> bool:
-        return LibraryItemDocument.objects(isbn=isbn).count() > 0
-
-    def is_item_borrowed(self, isbn: str) -> bool:
-        return LibraryItemDocument.objects(isbn=isbn).first().is_borrowed
-
-    def search_items(self, query: Dict[str, Optional[str]]) -> List[LibraryItemDocument]:
-        mongo_query = Q()
-        if 'title' in query and query['title']:
-            mongo_query &= Q(title__icontains=query['title'])
-        if 'isbn' in query and query['isbn']:
-            mongo_query &= Q(isbn=query['isbn'])
-        if 'author' in query and query['author']:
-            mongo_query &= Q(author__icontains=query['author'])
-
-        return list(LibraryItemDocument.objects(mongo_query))
+    async def search_items(self, query: Dict[str, Optional[str]]) -> List[LibraryItemDocument]:
+        return await LibraryItemDocument.find(query).to_list()
 
 
-class MongoPatronRepository(PatronRepository):
-    def return_item(self, patron_id: str, isbn: str):
-        """
-        Update the items associated with a library patron.
-
-        Args:
-            patron_id (str): The ID of the patron.
-            isbn (str): The ISBN of the item.
-        """
-        patron = PatronDocument.objects(patron_id=patron_id).first()
-        patron.patron_items.pop(isbn, None)
-        patron.save()
-
-    def borrow_item(self, patron_id: str, isbn: str, borrow_date: Optional[datetime] = None):
-        """
-        Update the items associated with a library patron.
-
-        Args:
-            patron_id (str): The ID of the patron.
-            isbn (str): The ISBN of the item.
-            borrow_date (Optional[datetime]): The date when the item is borrowed.
-        """
-
-        patron = PatronDocument.objects(patron_id=patron_id).first()
-        patron.patron_items[isbn] = borrow_date
-        patron.save()
-
-    def insert_document(self, document: PatronDocument) -> None:
-        """
-        Insert a patron document into the database.
-
-        Args:
-            document (PatronDocument): The document to insert.
-        """
-        document.save()
-
-    def delete_document(self, query: Dict[str, Any]) -> None:
-        """
-        Delete a patron document from the database.
-
-        Args:
-            query (dict): The query to find the document to delete.
-        """
-        PatronDocument.objects(**query).delete()
-
-    def patron_exists(self, isbn: str) -> bool:
-        return LibraryItemDocument.objects(isbn=isbn).count() > 0
+from typing import Dict
+from src.mongodb.mongodb_models.patron_model import PatronDocument
 
 
-class MongoBillRepository(BillRepository):
-    def insert_bill(self, patron_id: str, amount: float) -> None:
-        """
-        Insert a new bill for a patron.
+class MongoPatronRepository:
+    async def return_item(self, patron_id: str, isbn: str) -> None:
+        patron = await PatronDocument.find_one(PatronDocument.id == patron_id)
+        if patron:
+            patron.items.pop(isbn, None)
+            await patron.save()
 
-        Args:
-            patron_id (str): The ID of the patron.
-            amount (float): The amount of the bill.
-        """
-        bill = BillDocument(patron_id=patron_id, amount=amount)
-        bill.save()
+    async def borrow_item(self, patron_id: str, isbn: str, borrow_date) -> None:
+        patron = await PatronDocument.find_one(PatronDocument.id == patron_id)
+        if patron:
+            patron.items[isbn] = borrow_date
+            await patron.save()
 
-    def update_bill(self, patron_id: str, amount: float) -> None:
-        """
-        Update the bill for a patron.
+    async def insert_document(self, document: PatronDocument) -> None:
+        await document.insert()
 
-        Args:
-            patron_id (str): The ID of the patron.
-            amount (float): The new amount for the bill.
-        """
-        bill = BillDocument.objects(patron_id=patron_id).first()
+    async def delete_document(self, query: Dict) -> None:
+        await PatronDocument.find(query).delete()
+
+    async def patron_exists(self, patron_id: str) -> bool:
+        return await PatronDocument.find(PatronDocument.id == patron_id).count() > 0
+
+
+from src.mongodb.mongodb_models.bills_model import BillDocument
+
+
+class MongoBillRepository:
+    async def insert_bill(self, patron_id: str, amount: float) -> None:
+        bill = BillDocument(patron_id=patron_id, patron_bill_sum=amount)
+        await bill.insert()
+
+    async def update_bill(self, patron_id: str, amount: float) -> None:
+        bill = await BillDocument.find_one(BillDocument.patron_id == patron_id)
         if bill:
-            bill.update(set__amount=amount)
+            bill.patron_bill_sum = amount
+            await bill.save()
 
-    def delete_bill(self, patron_id: str) -> None:
-        """
-        Delete the bill for a patron.
-
-        Args:
-            patron_id (str): The ID of the patron.
-        """
-        BillDocument.objects(patron_id=patron_id).delete()
+    async def delete_bill(self, patron_id: str) -> None:
+        await BillDocument.find(BillDocument.patron_id == patron_id).delete()

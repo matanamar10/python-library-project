@@ -1,15 +1,14 @@
-# Define Patron document
 from beanie import Document
-from mongoengine import StringField, DictField, DateTimeField
-
+from typing import Dict
+from datetime import datetime
+from pydantic import Field
 from src.env_utils import MongoDBSettings
 
 
 class PatronDocument(Document):
-    name = StringField(required=True, max_length=60)
-    id = StringField(required=True, unique=True, regex=r'^\d{9}$')
-    items = DictField(field=DateTimeField())
+    name: str = Field(..., max_length=60)
+    id: str = Field(..., regex=r'^\d{9}$', unique=True)
+    items: Dict[str, datetime] = Field(...)  # Stores borrowed items and their due dates
 
-    meta = {
-        'collection': MongoDBSettings().mongo_patrons_collection
-    }
+    class Settings:
+        collection = MongoDBSettings().mongo_patrons_collection
