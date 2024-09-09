@@ -29,7 +29,7 @@ class BorrowingDepartment:
         patron_document = await PatronDocument.find_one(PatronDocument.id== patron_id)
         patron = patron_mongoengine_to_pydantic(patron_document)
 
-        patron_calculated_bill = await calculate_bill(patron=patron)
+        patron_calculated_bill =  calculate_bill(patron=patron)
         bill_document = await BillDocument.find_one(BillDocument.patron_id == patron_id)
 
         bill_document.patron_bill_sum = patron_calculated_bill

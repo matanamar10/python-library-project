@@ -1,5 +1,3 @@
-# dal/dal.py
-
 from abc import ABC, abstractmethod
 from typing import Optional, Dict, List
 from datetime import datetime
@@ -10,9 +8,9 @@ from src.mongodb.mongodb_models.patron_model import PatronDocument
 
 class LibraryItemRepository(ABC):
     @abstractmethod
-    def update_item_status(self, isbn: str, is_borrowed: bool) -> None:
+    async def update_item_status(self, isbn: str, is_borrowed: bool) -> None:
         """
-        Update the status of a library item by its ISBN.
+        Asynchronously update the status of a library item by its ISBN.
 
         Args:
             isbn (str): The ISBN of the library item.
@@ -21,9 +19,9 @@ class LibraryItemRepository(ABC):
         pass
 
     @abstractmethod
-    def insert_document(self, document: LibraryItemDocument) -> None:
+    async def insert_document(self, document: LibraryItemDocument) -> None:
         """
-        Insert a library item document into the database.
+        Asynchronously insert a library item document into the database.
 
         Args:
             document (LibraryItemDocument): The document to insert.
@@ -31,9 +29,9 @@ class LibraryItemRepository(ABC):
         pass
 
     @abstractmethod
-    def delete_document(self, query: dict) -> None:
+    async def delete_document(self, query: dict) -> None:
         """
-        Delete a library item document from the database.
+        Asynchronously delete a library item document from the database.
 
         Args:
             query (dict): The query to find the document to delete.
@@ -41,9 +39,9 @@ class LibraryItemRepository(ABC):
         pass
 
     @abstractmethod
-    def item_exists(self, isbn: str) -> bool:
+    async def item_exists(self, isbn: str) -> bool:
         """
-        Check if a library item exists by its ISBN.
+        Asynchronously check if a library item exists by its ISBN.
 
         Args:
             isbn (str): The ISBN of the library item.
@@ -53,17 +51,38 @@ class LibraryItemRepository(ABC):
         """
         pass
 
-    def is_item_borrowed(self, isbn: str) -> bool:
+    @abstractmethod
+    async def is_item_borrowed(self, isbn: str) -> bool:
+        """
+        Asynchronously check if a library item is borrowed by its ISBN.
+
+        Args:
+            isbn (str): The ISBN of the library item.
+
+        Returns:
+            bool: True if the item is borrowed, False otherwise.
+        """
         pass
 
-    def search_items(self, query: Dict[str, Optional[str]]) -> List[LibraryItemDocument]:
+    @abstractmethod
+    async def search_items(self, query: Dict[str, Optional[str]]) -> List[LibraryItemDocument]:
+        """
+        Asynchronously search for library items based on a query.
+
+        Args:
+            query (Dict[str, Optional[str]]): Search criteria.
+
+        Returns:
+            List[LibraryItemDocument]: List of matching library items.
+        """
         pass
+
 
 class PatronRepository(ABC):
     @abstractmethod
-    def borrow_item(self, patron_id: str, isbn: str, borrow_date: Optional[datetime] = None):
+    async def borrow_item(self, patron_id: str, isbn: str, borrow_date: Optional[datetime] = None):
         """
-        Borrow an item for a library patron.
+        Asynchronously borrow an item for a library patron.
 
         Args:
             patron_id (str): The ID of the patron.
@@ -73,9 +92,9 @@ class PatronRepository(ABC):
         pass
 
     @abstractmethod
-    def return_item(self, patron_id: str, isbn: str):
+    async def return_item(self, patron_id: str, isbn: str):
         """
-        Return an item for a library patron.
+        Asynchronously return an item for a library patron.
 
         Args:
             patron_id (str): The ID of the patron.
@@ -84,9 +103,9 @@ class PatronRepository(ABC):
         pass
 
     @abstractmethod
-    def insert_document(self, document: PatronDocument) -> None:
+    async def insert_document(self, document: PatronDocument) -> None:
         """
-        Insert a patron document into the database.
+        Asynchronously insert a patron document into the database.
 
         Args:
             document (PatronDocument): The document to insert.
@@ -94,9 +113,9 @@ class PatronRepository(ABC):
         pass
 
     @abstractmethod
-    def delete_document(self, query: dict) -> None:
+    async def delete_document(self, query: dict) -> None:
         """
-        Delete a patron document from the database.
+        Asynchronously delete a patron document from the database.
 
         Args:
             query (dict): The query to find the document to delete.
@@ -104,15 +123,24 @@ class PatronRepository(ABC):
         pass
 
     @abstractmethod
-    def patron_exists(self, patron_id: str) -> bool:
+    async def patron_exists(self, patron_id: str) -> bool:
+        """
+        Asynchronously check if a patron exists by their ID.
+
+        Args:
+            patron_id (str): The ID of the patron.
+
+        Returns:
+            bool: True if the patron exists, False otherwise.
+        """
         pass
 
 
 class BillRepository(ABC):
     @abstractmethod
-    def insert_bill(self, patron_id: str, amount: float) -> None:
+    async def insert_bill(self, patron_id: str, amount: float) -> None:
         """
-        Insert a new bill for a patron.
+        Asynchronously insert a new bill for a patron.
 
         Args:
             patron_id (str): The ID of the patron.
@@ -121,9 +149,9 @@ class BillRepository(ABC):
         pass
 
     @abstractmethod
-    def update_bill(self, patron_id: str, amount: float) -> None:
+    async def update_bill(self, patron_id: str, amount: float) -> None:
         """
-        Update the bill for a patron.
+        Asynchronously update the bill for a patron.
 
         Args:
             patron_id (str): The ID of the patron.
@@ -132,9 +160,9 @@ class BillRepository(ABC):
         pass
 
     @abstractmethod
-    def delete_bill(self, patron_id: str) -> None:
+    async def delete_bill(self, patron_id: str) -> None:
         """
-        Delete the bill for a patron.
+        Asynchronously delete the bill for a patron.
 
         Args:
             patron_id (str): The ID of the patron.
