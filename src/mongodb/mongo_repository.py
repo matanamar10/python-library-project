@@ -1,17 +1,10 @@
 # mongodb/mongo_repository.py
 
-from typing import Dict, Any, Optional, List
-from datetime import datetime
-
-from mongoengine import Q
-
-from src.dal.dal import LibraryItemRepository, PatronRepository, BillRepository
+from typing import List, Optional
 from src.mongodb.mongodb_models.library_item_model import LibraryItemDocument
+from typing import Dict
 from src.mongodb.mongodb_models.patron_model import PatronDocument
 from src.mongodb.mongodb_models.bills_model import BillDocument
-
-from typing import Dict, List, Optional
-from src.mongodb.mongodb_models.library_item_model import LibraryItemDocument
 
 
 class MongoLibraryItemRepository:
@@ -38,10 +31,6 @@ class MongoLibraryItemRepository:
         return await LibraryItemDocument.find(query).to_list()
 
 
-from typing import Dict
-from src.mongodb.mongodb_models.patron_model import PatronDocument
-
-
 class MongoPatronRepository:
     async def return_item(self, patron_id: str, isbn: str) -> None:
         patron = await PatronDocument.find_one(PatronDocument.id == patron_id)
@@ -63,9 +52,6 @@ class MongoPatronRepository:
 
     async def patron_exists(self, patron_id: str) -> bool:
         return await PatronDocument.find(PatronDocument.id == patron_id).count() > 0
-
-
-from src.mongodb.mongodb_models.bills_model import BillDocument
 
 
 class MongoBillRepository:
