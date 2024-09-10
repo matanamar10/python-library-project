@@ -1,4 +1,3 @@
-from mongoengine import Document, StringField, FloatField
 from beanie import Document
 from pydantic import Field
 from src.env_utils import MongoDBSettings
