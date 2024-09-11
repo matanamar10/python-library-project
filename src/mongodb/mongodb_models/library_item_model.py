@@ -7,7 +7,7 @@ from src.env_utils import MongoDBSettings
 class LibraryItemDocument(Document):
     is_borrowed: bool = Field(default=False)
     title: str = Field(..., max_length=60)
-    isbn: str = Field(..., regex=r'^\d{9}$', unique=True)
+    isbn: str = Field(..., pattern="^[a-zA-Z0-9]+$")
     type: Literal["Disk", "Book"]
 
     class Settings:
