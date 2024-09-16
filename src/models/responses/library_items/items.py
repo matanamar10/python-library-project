@@ -19,13 +19,9 @@ class LibraryItemResponse(BaseModel):
 
 
 class LibraryItemStatusResponse(BaseModel):
-    message: str = Field(...,
-                         description="A descriptive message about the status of borrowing or returning a specific library item, including the item's ISBN.")
+    message: str = Field(...,description="A descriptive message about the status of borrowing or returning a specific library item, including the item's ISBN.")
     isbn: str = Field(..., pattern=r'^\d{9}$')
 
 
 class NewItemsResponse(BaseModel):
-    message: str = Field(...,
-                         description="A message confirming the successful addition of new items to the library collection")
-
-
+    message: str = Field(...,description="A message confirming the successful addition of new items to the library collection")
