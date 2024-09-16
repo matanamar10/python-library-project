@@ -97,26 +97,22 @@ class MongoPatronRepository:
             patron.items[isbn] = borrow_date
             await patron.save()
 
-    class MongoPatronRepository:
+
+    async def add_patron(self, document: PatronDocument) -> None:
         """
-        A repository class for managing PatronDocument operations in MongoDB.
+        Adds a new PatronDocument into the MongoDB collection.
+
+        :param document: The PatronDocument to be added.
         """
+        await document.insert()
 
-        async def add_patron(self, document: PatronDocument) -> None:
-            """
-            Adds a new PatronDocument into the MongoDB collection.
+    async def remove_patron(self, query: Dict) -> None:
+        """
+        Removes a PatronDocument from the MongoDB collection based on the provided query.
 
-            :param document: The PatronDocument to be added.
-            """
-            await document.insert()
-
-        async def remove_patron(self, query: Dict) -> None:
-            """
-            Removes a PatronDocument from the MongoDB collection based on the provided query.
-
-            :param query: Dictionary specifying the query to match documents for removal.
-            """
-            await PatronDocument.find(query).delete()
+        :param query: Dictionary specifying the query to match documents for removal.
+        """
+        await PatronDocument.find(query).delete()
 
     async def patron_exists(self, patron_id: str) -> bool:
         """
