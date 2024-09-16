@@ -1,7 +1,6 @@
 from beanie import Document
 from typing import Dict
 from datetime import datetime
-from pydantic import Field
 from src.env_utils import MongoDBSettings
 
 
