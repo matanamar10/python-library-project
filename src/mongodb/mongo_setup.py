@@ -18,10 +18,9 @@ async def connect_to_mongodb():
     await init_beanie(database=db, document_models=[LibraryItemDocument, PatronDocument, BillDocument])
 
 
-
 async def disconnect_from_mongodb():
     global client
     if client is None:
         raise RuntimeError("MongoDB client is not initialized or already disconnected.")
-    client.close()  # Close the client connection (sync method)
-    client = None  # Optionally set client to None after closing
+    client.close()
+    client = None
