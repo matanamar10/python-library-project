@@ -19,22 +19,22 @@ class LibraryItemRepository(ABC):
         pass
 
     @abstractmethod
-    async def insert_document(self, document: LibraryItemDocument) -> None:
+    async def add_library_item(self, document: LibraryItemDocument) -> None:
         """
-        Asynchronously insert a library item document into the database.
+        Asynchronously add a library item document to the database.
 
         Args:
-            document (LibraryItemDocument): The document to insert.
+            document (LibraryItemDocument): The document to add.
         """
         pass
 
     @abstractmethod
-    async def delete_document(self, query: dict) -> None:
+    async def remove_library_item(self, query: dict) -> None:
         """
-        Asynchronously delete a library item document from the database.
+        Asynchronously remove a library item document from the database.
 
         Args:
-            query (dict): The query to find the document to delete.
+            query (dict): The query to find the document to remove.
         """
         pass
 
@@ -103,22 +103,22 @@ class PatronRepository(ABC):
         pass
 
     @abstractmethod
-    async def insert_document(self, document: PatronDocument) -> None:
+    async def add_patron(self, document: PatronDocument) -> None:
         """
-        Asynchronously insert a patron document into the database.
+        Asynchronously add a patron document to the database.
 
         Args:
-            document (PatronDocument): The document to insert.
+            document (PatronDocument): The document to add.
         """
         pass
 
     @abstractmethod
-    async def delete_document(self, query: dict) -> None:
+    async def remove_patron(self, query: dict) -> None:
         """
-        Asynchronously delete a patron document from the database.
+        Asynchronously remove a patron document from the database.
 
         Args:
-            query (dict): The query to find the document to delete.
+            query (dict): The query to find the document to remove.
         """
         pass
 
