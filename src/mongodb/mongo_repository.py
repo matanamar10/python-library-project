@@ -22,19 +22,19 @@ class MongoLibraryItemRepository:
             item.is_borrowed = is_borrowed
             await item.save()
 
-    async def insert_document(self, document: LibraryItemDocument) -> None:
+    async def add_library_item(self, document: LibraryItemDocument) -> None:
         """
-        Inserts a new LibraryItemDocument into the MongoDB collection.
+        Adds a new LibraryItemDocument into the MongoDB collection.
 
-        :param document: The LibraryItemDocument to be inserted.
+        :param document: The LibraryItemDocument to be added.
         """
         await document.insert()
 
-    async def delete_document(self, query: Dict[str, str]) -> None:
+    async def remove_library_item(self, query: Dict[str, str]) -> None:
         """
-        Deletes a LibraryItemDocument from the MongoDB collection based on the provided query.
+        Removes a LibraryItemDocument from the MongoDB collection based on the provided query.
 
-        :param query: Dictionary specifying the query to match documents for deletion.
+        :param query: Dictionary specifying the query to match documents for removal.
         """
         await LibraryItemDocument.find(query).delete()
 
@@ -97,21 +97,26 @@ class MongoPatronRepository:
             patron.items[isbn] = borrow_date
             await patron.save()
 
-    async def insert_document(self, document: PatronDocument) -> None:
+    class MongoPatronRepository:
         """
-        Inserts a new PatronDocument into the MongoDB collection.
+        A repository class for managing PatronDocument operations in MongoDB.
+        """
 
-        :param document: The PatronDocument to be inserted.
-        """
-        await document.insert()
+        async def add_patron(self, document: PatronDocument) -> None:
+            """
+            Adds a new PatronDocument into the MongoDB collection.
 
-    async def delete_document(self, query: Dict) -> None:
-        """
-        Deletes a PatronDocument from the MongoDB collection based on the provided query.
+            :param document: The PatronDocument to be added.
+            """
+            await document.insert()
 
-        :param query: Dictionary specifying the query to match documents for deletion.
-        """
-        await PatronDocument.find(query).delete()
+        async def remove_patron(self, query: Dict) -> None:
+            """
+            Removes a PatronDocument from the MongoDB collection based on the provided query.
+
+            :param query: Dictionary specifying the query to match documents for removal.
+            """
+            await PatronDocument.find(query).delete()
 
     async def patron_exists(self, patron_id: str) -> bool:
         """
