@@ -18,6 +18,7 @@ async def connect_to_mongodb():
     await init_beanie(database=db, document_models=[LibraryItemDocument, PatronDocument, BillDocument])
 
 
+
 async def disconnect_from_mongodb():
     global client
     if client is None:
