@@ -11,4 +11,4 @@ Attributes:
 
 
 class Disk(LibraryItem):
-    type: str = Field(..., max_length=60)
+    disk_type: str = Field(..., max_length=60)

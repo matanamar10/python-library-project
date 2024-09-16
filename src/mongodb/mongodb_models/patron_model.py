@@ -6,9 +6,9 @@ from src.env_utils import MongoDBSettings
 
 
 class PatronDocument(Document):
-    name: str = Field(..., max_length=60)
-    id: str = Field(..., regex=r'^\d{9}$', unique=True)
-    items: Dict[str, datetime] = Field(...)  # Stores borrowed items and their due dates
+    name: str
+    id: str
+    items: Dict[str, datetime]
 
     class Settings:
         collection = MongoDBSettings().mongo_patrons_collection

@@ -15,7 +15,20 @@ class BorrowingDepartment:
 
     async def return_item(self, library_item: LibraryItem, patron_id: str):
         """
-        Handles the asynchronous return process of a library item by a patron.
+        Handles the return process of a library item by a patron.
+
+        This function updates the library system when a patron returns a borrowed item. It checks if the patron
+         exists, verifies   if the item is in the library's inventory and currently borrowed, calculates any
+        outstanding bills, and processes the return if all conditions are met.
+
+        Parameters:
+        - library (Library): The Library object representing the library system.
+        - library_item (LibraryItem): The LibraryItem object (book, disk, etc.) being returned.
+        - patron_id (str): The unique identifier for the patron returning the item.
+
+        Raises:
+        - ValueError: If the patron does not exist, the item is not in the library, the item is not borrowed,
+                      or if the patron has outstanding bills.
         """
         if not await self.controller_manager.patron_repo.patron_exists(patron_id):
             raise PatronNotFoundError(patron_id)
@@ -49,7 +62,19 @@ class BorrowingDepartment:
 
     async def borrow_item(self, library_item: LibraryItem, patron_id: str):
         """
-        Handles the asynchronous borrowing process of a library item by a patron.
+        Handles the borrowing process of a library item by a patron.
+
+        This function updates the library system when a patron borrows an item. It checks if the patron exists,
+        verifies if the item is in the library's inventory and not currently borrowed, and processes the borrowing
+        if all conditions are met.
+
+        Parameters:
+        - library (Library): The Library object representing the library system.
+        - library_item (LibraryItem): The LibraryItem object (book, disk, etc.) being borrowed.
+        - patron_id (str): The unique identifier for the patron borrowing the item.
+
+        Raises:
+        - ValueError: If the patron does not exist, the item is not in the library, or if the item is already borrowed.
         """
         if await self.controller_manager.patron_repo.patron_exists(patron_id):
             raise PatronNotFoundError(patron_id)
