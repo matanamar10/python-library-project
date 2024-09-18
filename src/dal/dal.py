@@ -1,170 +1,69 @@
-from abc import ABC, abstractmethod
-from typing import Optional, Dict, List
-from datetime import datetime
+from typing import TypeVar, Generic, Type, List, Optional, Dict
 
-from src.mongodb.mongodb_models.library_item_model import LibraryItemDocument
-from src.mongodb.mongodb_models.patron_model import PatronDocument
+T = TypeVar("T")
 
+class BaseRepository(Generic[T]):
+    """
+    A completely generic base repository for handling common CRUD operations.
+    This class is backend-agnostic and can be extended for any specific database implementation (MongoDB, SQL, etc.).
+    """
 
-class LibraryItemRepository(ABC):
-    @abstractmethod
-    async def update_item_status(self, isbn: str, is_borrowed: bool) -> None:
+    def __init__(self, model: Type[T]):
         """
-        Asynchronously update the status of a library item by its ISBN.
+        Initialize the repository with a model class.
+        The model class can represent any type (e.g., MongoDB document, SQL ORM model).
 
-        Args:
-            isbn (str): The ISBN of the library item.
-            is_borrowed (bool): True if the item is borrowed, False if it is returned.
+        :param model: The model class (e.g., MongoDB document or SQL ORM model).
         """
-        pass
+        self.model = model
 
-    @abstractmethod
-    async def add_library_item(self, document: LibraryItemDocument) -> None:
+    async def add(self, entity: T) -> None:
         """
-        Asynchronously add a library item document to the database.
+        Adds a new entity to the storage backend.
 
-        Args:
-            document (LibraryItemDocument): The document to add.
+        :param entity: The entity to be added.
         """
-        pass
+        await entity.insert()
 
-    @abstractmethod
-    async def remove_library_item(self, query: dict) -> None:
+    async def remove(self, query: Dict[str, Optional[str]]) -> None:
         """
-        Asynchronously remove a library item document from the database.
+        Removes an entity from the storage backend based on the provided query.
 
-        Args:
-            query (dict): The query to find the document to remove.
+        :param query: The query dictionary to filter which entities should be removed.
         """
-        pass
+        await self.model.find(query).delete()
 
-    @abstractmethod
-    async def item_exists(self, isbn: str) -> bool:
+    async def update(self, entity: T) -> None:
         """
-        Asynchronously check if a library item exists by its ISBN.
+        Updates an existing entity in the storage backend.
 
-        Args:
-            isbn (str): The ISBN of the library item.
-
-        Returns:
-            bool: True if the item exists, False otherwise.
+        :param entity: The entity to be updated.
         """
-        pass
+        await entity.save()
 
-    @abstractmethod
-    async def is_item_borrowed(self, isbn: str) -> bool:
+    async def find_one(self, query: Dict[str, Optional[str]]) -> Optional[T]:
         """
-        Asynchronously check if a library item is borrowed by its ISBN.
+        Finds a single entity based on the provided query.
 
-        Args:
-            isbn (str): The ISBN of the library item.
-
-        Returns:
-            bool: True if the item is borrowed, False otherwise.
+        :param query: The query dictionary to filter the entities.
+        :return: A single entity or None if not found.
         """
-        pass
+        return await self.model.find_one(query)
 
-    @abstractmethod
-    async def search_items(self, query: Dict[str, Optional[str]]) -> List[LibraryItemDocument]:
+    async def find_all(self, query: Dict[str, Optional[str]]) -> List[T]:
         """
-        Asynchronously search for library items based on a query.
+        Finds all entities that match the provided query.
 
-        Args:
-            query (Dict[str, Optional[str]]): Search criteria.
-
-        Returns:
-            List[LibraryItemDocument]: List of matching library items.
+        :param query: The query dictionary to filter the entities.
+        :return: A list of entities matching the query.
         """
-        pass
+        return await self.model.find(query).to_list()
 
-
-class PatronRepository(ABC):
-    @abstractmethod
-    async def borrow_item(self, patron_id: str, isbn: str, borrow_date: Optional[datetime] = None):
+    async def exists(self, query: Dict[str, Optional[str]]) -> bool:
         """
-        Asynchronously borrow an item for a library patron.
+        Checks whether any entity exists that matches the provided query.
 
-        Args:
-            patron_id (str): The ID of the patron.
-            isbn (str): The ISBN of the item.
-            borrow_date (Optional[datetime]): The date when the item is borrowed.
+        :param query: The query dictionary to filter the entities.
+        :return: True if an entity exists, False otherwise.
         """
-        pass
-
-    @abstractmethod
-    async def return_item(self, patron_id: str, isbn: str):
-        """
-        Asynchronously return an item for a library patron.
-
-        Args:
-            patron_id (str): The ID of the patron.
-            isbn (str): The ISBN of the item.
-        """
-        pass
-
-    @abstractmethod
-    async def add_patron(self, document: PatronDocument) -> None:
-        """
-        Asynchronously add a patron document to the database.
-
-        Args:
-            document (PatronDocument): The document to add.
-        """
-        pass
-
-    @abstractmethod
-    async def remove_patron(self, query: dict) -> None:
-        """
-        Asynchronously remove a patron document from the database.
-
-        Args:
-            query (dict): The query to find the document to remove.
-        """
-        pass
-
-    @abstractmethod
-    async def patron_exists(self, patron_id: str) -> bool:
-        """
-        Asynchronously check if a patron exists by their ID.
-
-        Args:
-            patron_id (str): The ID of the patron.
-
-        Returns:
-            bool: True if the patron exists, False otherwise.
-        """
-        pass
-
-
-class BillRepository(ABC):
-    @abstractmethod
-    async def insert_bill(self, patron_id: str, amount: float) -> None:
-        """
-        Asynchronously insert a new bill for a patron.
-
-        Args:
-            patron_id (str): The ID of the patron.
-            amount (float): The amount of the bill.
-        """
-        pass
-
-    @abstractmethod
-    async def update_bill(self, patron_id: str, amount: float) -> None:
-        """
-        Asynchronously update the bill for a patron.
-
-        Args:
-            patron_id (str): The ID of the patron.
-            amount (float): The new amount for the bill.
-        """
-        pass
-
-    @abstractmethod
-    async def delete_bill(self, patron_id: str) -> None:
-        """
-        Asynchronously delete the bill for a patron.
-
-        Args:
-            patron_id (str): The ID of the patron.
-        """
-        pass
+        return await self.model.find(query).count() > 0
