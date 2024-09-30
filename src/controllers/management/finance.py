@@ -16,7 +16,6 @@ def calculate_bill(patron: PatronDocument) -> float:
     calculated_bill = 0
     check_date = datetime.now()
 
-    # Assuming `patron_items` in PatronDocument stores items as a dictionary where the key is the ISBN and value is the due date
     for patron_item_isbn, patron_item_due_date in patron.items.items():
         if check_date > patron_item_due_date:
             days_late = (check_date - patron_item_due_date).days
