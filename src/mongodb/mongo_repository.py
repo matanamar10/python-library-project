@@ -1,5 +1,8 @@
 from src.dal.dal import BaseRepository
 from src.mongodb.mongodb_models.library_item_model import LibraryItemDocument
+from src.mongodb.mongodb_models.bills_model import BillDocument
+from src.mongodb.mongodb_models.patron_model import PatronDocument
+from datetime import datetime
 
 
 class MongoLibraryItemRepository(BaseRepository[LibraryItemDocument]):
@@ -32,7 +35,6 @@ class MongoLibraryItemRepository(BaseRepository[LibraryItemDocument]):
         item = await self.find_one({"isbn": isbn})
         return item.is_borrowed if item else False
 
-from src.mongodb.mongodb_models.patron_model import PatronDocument
 
 class MongoPatronRepository(BaseRepository[PatronDocument]):
     """
@@ -43,7 +45,7 @@ class MongoPatronRepository(BaseRepository[PatronDocument]):
     def __init__(self):
         super().__init__(PatronDocument)
 
-    async def borrow_item(self, patron_id: str, isbn: str, borrow_date: str) -> None:
+    async def borrow_item(self, patron_id: str, isbn: str, borrow_date: datetime) -> None:
         """
         Adds an item to a patron's borrowed list by ISBN.
 
@@ -77,7 +79,6 @@ class MongoPatronRepository(BaseRepository[PatronDocument]):
         """
         return await self.exists({"id": patron_id})
 
-from src.mongodb.mongodb_models.bills_model import BillDocument
 
 class MongoBillRepository(BaseRepository[BillDocument]):
     """
