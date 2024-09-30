@@ -3,7 +3,7 @@ from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
-from src.models.entities.library_items.items import LibraryItem
+from src.mongodb.mongodb_models.library_item_model import LibraryItemDocument
 
 """
 Represents a generic library_system item.
@@ -31,12 +31,12 @@ class LibraryItemRequest(BaseModel):
 
 
 class BorrowRequest(BaseModel):
-    library_item: LibraryItem
+    library_item: LibraryItemDocument
     patron_id: str = Field(Field(..., pattern=r'^\d{9}$'))
 
 
 class AddItemsRequest(BaseModel):
-    library_items: List[LibraryItem]
+    library_items: List[LibraryItemDocument]
 
 class ItemRequest(BaseModel):
     item_isbn: str = Field(Field(..., pattern=r'^\d{9}$'))

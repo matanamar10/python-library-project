@@ -43,20 +43,16 @@ class BorrowingDepartment:
         if not await self.controller_manager.library_item_repo.is_item_borrowed(library_item_isbn):
             raise BorrowedLibraryItemNotFound(library_item_isbn)
 
-        # Get the patron document
         patron_document = await PatronDocument.find_one(PatronDocument.id == patron_id)
 
-        # Calculate bills
         patron_calculated_bill = calculate_bill(patron=patron_document)
         bill_document = await BillDocument.find_one(BillDocument.patron_id == patron_id)
         bill_document.patron_bill_sum = patron_calculated_bill
         await bill_document.save()
 
-        # If there is any bill left to pay, raise an error
         if bill_document.patron_bill_sum != 0:
             raise BillToPayError(patron_id)
 
-        # Update library item and patron status
         await self.controller_manager.patron_repo.return_item(patron_id, library_item_isbn)
         await self.controller_manager.library_item_repo.update_item_status(library_item_isbn, False)
 
@@ -79,15 +75,12 @@ class BorrowingDepartment:
         if not await self.controller_manager.patron_repo.patron_exists(patron_id):
             raise PatronNotFoundError(patron_id)
 
-        # Verify library item existence
         if not await self.controller_manager.library_item_repo.item_exists(library_item_isbn):
             raise LibraryItemNotFoundError(library_item_isbn)
 
-        # Verify if the item is not already borrowed
         if await self.controller_manager.library_item_repo.is_item_borrowed(library_item_isbn):
             raise LibraryItemAlreadyBorrowedError(library_item_isbn)
 
-        # Update the status of the library item and patron
         borrow_date = datetime.now()
         await self.controller_manager.patron_repo.borrow_item(patron_id, library_item_isbn, borrow_date)
         await self.controller_manager.library_item_repo.update_item_status(library_item_isbn, True)
