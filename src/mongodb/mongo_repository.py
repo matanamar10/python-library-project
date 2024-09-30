@@ -1,17 +1,17 @@
 from src.dal.dal import BaseRepository
-from src.mongodb.mongodb_models.library_item_model import LibraryItemDocument
-from src.mongodb.mongodb_models.bills_model import BillDocument
-from src.mongodb.mongodb_models.patron_model import PatronDocument
+from src.mongodb.mongodb_models.library_item_model import LibraryItem
+from src.mongodb.mongodb_models.bills_model import Bill
+from src.mongodb.mongodb_models.patron_model import Patron
 from datetime import datetime
 
 
-class MongoLibraryItemRepository(BaseRepository[LibraryItemDocument]):
+class MongoLibraryItemRepository(BaseRepository[LibraryItem]):
     """
     A MongoDB-specific repository for managing LibraryItemDocument operations.
     """
 
     def __init__(self):
-        super().__init__(LibraryItemDocument)
+        super().__init__(LibraryItem)
 
     async def update_item_status(self, isbn: str, is_borrowed: bool) -> None:
         """
@@ -36,14 +36,14 @@ class MongoLibraryItemRepository(BaseRepository[LibraryItemDocument]):
         return item.is_borrowed if item else False
 
 
-class MongoPatronRepository(BaseRepository[PatronDocument]):
+class MongoPatronRepository(BaseRepository[Patron]):
     """
     A MongoDB-specific repository for managing PatronDocument operations.
     Includes domain-specific operations like borrowing and returning items.
     """
 
     def __init__(self):
-        super().__init__(PatronDocument)
+        super().__init__(Patron)
 
     async def borrow_item(self, patron_id: str, isbn: str, borrow_date: datetime) -> None:
         """
@@ -80,13 +80,13 @@ class MongoPatronRepository(BaseRepository[PatronDocument]):
         return await self.exists({"id": patron_id})
 
 
-class MongoBillRepository(BaseRepository[BillDocument]):
+class MongoBillRepository(BaseRepository[Bill]):
     """
     A MongoDB-specific repository for managing BillDocument operations.
     """
 
     def __init__(self):
-        super().__init__(BillDocument)
+        super().__init__(Bill)
 
     async def insert_bill(self, patron_id: str, amount: float) -> None:
         """
@@ -95,7 +95,7 @@ class MongoBillRepository(BaseRepository[BillDocument]):
         :param patron_id: The ID of the patron to whom the bill belongs.
         :param amount: The amount of the bill.
         """
-        bill = BillDocument(patron_id=patron_id, patron_bill_sum=amount)
+        bill = Bill(patron_id=patron_id, patron_bill_sum=amount)
         await self.add(bill)
 
     async def update_bill(self, patron_id: str, amount: float) -> None:

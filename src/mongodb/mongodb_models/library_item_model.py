@@ -3,7 +3,7 @@ from typing import Literal
 from src.env_utils import MongoDBSettings
 
 
-class LibraryItemDocument(Document):
+class LibraryItem(Document):
     is_borrowed: bool
     title: str
     isbn: str

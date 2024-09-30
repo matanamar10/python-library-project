@@ -4,7 +4,7 @@ from datetime import datetime
 from src.env_utils import MongoDBSettings
 
 
-class PatronDocument(Document):
+class Patron(Document):
     name: str
     id: str
     items: Dict[str, datetime]
