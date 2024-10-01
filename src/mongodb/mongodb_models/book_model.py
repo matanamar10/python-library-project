@@ -1,7 +1,7 @@
 from pydantic import Field
 
-from src.mongodb.mongodb_models.library_item_model import LibraryItemDocument
+from src.mongodb.mongodb_models.library_item_model import LibraryItem
 
 
-class Book(LibraryItemDocument):
+class Book(LibraryItem):
     author: str

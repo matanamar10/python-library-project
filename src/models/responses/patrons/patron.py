@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from src.mongodb.mongodb_models.patron_model import PatronDocument
+from src.mongodb.mongodb_models.patron_model import Patron
 
 """
 Represents responses related to library patrons in the system.
@@ -13,7 +13,7 @@ class PatronResponse(BaseModel):
     Attributes:
         patron (PatronDocument): The Beanie document representing the library patron.
     """
-    patron: PatronDocument
+    patron: Patron
 
 
 class LibraryPatronStatusResponse(BaseModel):

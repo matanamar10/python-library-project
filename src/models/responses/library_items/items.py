@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from src.mongodb.mongodb_models.library_item_model import LibraryItemDocument
+from src.mongodb.mongodb_models.library_item_model import LibraryItem
 
 
 """
@@ -14,7 +14,7 @@ class LibraryItemResponse(BaseModel):
     Attributes:
         item (LibraryItemDocument): The Beanie document representing the library item.
     """
-    item: LibraryItemDocument
+    item: LibraryItem
 
 
 class LibraryItemStatusResponse(BaseModel):

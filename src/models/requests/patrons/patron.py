@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 from typing import Dict, Optional, List
 from datetime import datetime
 
-from src.mongodb.mongodb_models.patron_model import PatronDocument
+from src.mongodb.mongodb_models.patron_model import Patron
 
 """
 Represents a library_system patron.
@@ -20,9 +20,8 @@ class LibraryPatronRequest(BaseModel):
     patron_items: Dict[str, Optional[datetime]] = {}
 
 
-
 class AddPatronsRequest(BaseModel):
-    patrons_to_add: List[PatronDocument]
+    patrons_to_add: List[Patron]
 
 
 class PatronRequest(BaseModel):

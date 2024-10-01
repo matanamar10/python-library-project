@@ -2,8 +2,8 @@ import logging
 from typing import Dict, List, Optional
 from pydantic import BaseModel
 from src.controllers.controllers_manager import ControllersManager
-from src.mongodb.mongodb_models.library_item_model import LibraryItemDocument
-from src.mongodb.mongodb_models.patron_model import PatronDocument
+from src.mongodb.mongodb_models.library_item_model import LibraryItem
+from src.mongodb.mongodb_models.patron_model import Patron
 from utils.custom_library_errors import *
 
 
@@ -23,7 +23,7 @@ class Library(BaseModel):
         if not self.controllers_manager:
             self.controllers_manager = ControllersManager()
 
-    async def add_new_items(self, new_library_items: List[LibraryItemDocument]):
+    async def add_new_items(self, new_library_items: List[LibraryItem]):
         """
         Add new library items to the library system.
 
@@ -43,7 +43,7 @@ class Library(BaseModel):
                 f"was added to '{self.name}' library"
             )
 
-    async def add_new_patrons(self, patrons_to_add: List[PatronDocument]):
+    async def add_new_patrons(self, patrons_to_add: List[Patron]):
         """
         Add new patrons to the library system.
 
@@ -99,7 +99,7 @@ class Library(BaseModel):
         await self.controllers_manager.library_item_repo.remove_library_item({'isbn': library_item_isbn})
         logging.info(f"The item {library_item_isbn} was removed from the library")
 
-    async def search_items(self, criteria: Dict[str, str]) -> List[LibraryItemDocument]:
+    async def search_items(self, criteria: Dict[str, str]) -> List[LibraryItem]:
         """
         Search for library items based on criteria.
 

@@ -1,8 +1,8 @@
 import logging
 from datetime import datetime
 from src.controllers.management.finance import calculate_bill
-from src.mongodb.mongodb_models.bills_model import BillDocument
-from src.mongodb.mongodb_models.patron_model import PatronDocument
+from src.mongodb.mongodb_models.bills_model import Bill
+from src.mongodb.mongodb_models.patron_model import Patron
 from utils.custom_library_errors import *
 from src.controllers.controllers_manager import ControllersManager
 
@@ -31,22 +31,19 @@ class BorrowingDepartment:
             BorrowedLibraryItemNotFound: If the library item is not borrowed.
             BillToPayError: If the patron has outstanding bills.
         """
-        # Verify patron existence
         if not await self.controller_manager.patron_repo.patron_exists(patron_id):
             raise PatronNotFoundError(patron_id)
 
-        # Verify library item existence
         if not await self.controller_manager.library_item_repo.item_exists(library_item_isbn):
             raise LibraryItemNotFoundError(library_item_isbn)
 
-        # Verify if the item is currently borrowed
         if not await self.controller_manager.library_item_repo.is_item_borrowed(library_item_isbn):
             raise BorrowedLibraryItemNotFound(library_item_isbn)
 
-        patron_document = await PatronDocument.find_one(PatronDocument.id == patron_id)
+        patron_document = await Patron.find_one(Patron.id == patron_id)
 
         patron_calculated_bill = calculate_bill(patron=patron_document)
-        bill_document = await BillDocument.find_one(BillDocument.patron_id == patron_id)
+        bill_document = await Bill.find_one(Bill.patron_id == patron_id)
         bill_document.patron_bill_sum = patron_calculated_bill
         await bill_document.save()
 
@@ -71,7 +68,6 @@ class BorrowingDepartment:
             LibraryItemNotFoundError: If the library item does not exist.
             LibraryItemAlreadyBorrowedError: If the library item is already borrowed.
         """
-        # Verify patron existence
         if not await self.controller_manager.patron_repo.patron_exists(patron_id):
             raise PatronNotFoundError(patron_id)
 

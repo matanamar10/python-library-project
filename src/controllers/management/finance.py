@@ -1,9 +1,9 @@
 from datetime import datetime
 import logging
-from src.mongodb.mongodb_models.patron_model import PatronDocument
+from src.mongodb.mongodb_models.patron_model import Patron
 
 
-def calculate_bill(patron: PatronDocument) -> float:
+def calculate_bill(patron: Patron) -> float:
     """
     Calculate the bill for a patron based on overdue library items.
 
@@ -19,7 +19,6 @@ def calculate_bill(patron: PatronDocument) -> float:
     for patron_item_isbn, patron_item_due_date in patron.items.items():
         if check_date > patron_item_due_date:
             days_late = (check_date - patron_item_due_date).days
-            # Assuming `patron.discount` exists in PatronDocument; you can adjust this according to your model
             fine = days_late * 0.50 * patron.discount
             calculated_bill += fine
         else:
