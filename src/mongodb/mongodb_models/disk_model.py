@@ -1,7 +1,5 @@
-from mongoengine import StringField
-
-from src.mongodb.mongodb_models.library_item_model import LibraryItemDocument
+from src.mongodb.mongodb_models.library_item_model import LibraryItem
 
 
-class DiskDocument(LibraryItemDocument):
-    disk_type = StringField(required=True, max_length=60)
+class Disk(LibraryItem):
+    disk_type: str

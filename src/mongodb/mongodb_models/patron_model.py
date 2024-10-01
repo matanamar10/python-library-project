@@ -1,13 +1,13 @@
-# Define Patron document
-from mongoengine import Document, StringField, DictField, DateTimeField
+from beanie import Document
+from typing import Dict
+from datetime import datetime
 from src.env_utils import MongoDBSettings
 
 
-class PatronDocument(Document):
-    name = StringField(required=True, max_length=60)
-    id = StringField(required=True, unique=True, regex=r'^\d{9}$')
-    items = DictField(field=DateTimeField())
+class Patron(Document):
+    name: str
+    id: str
+    items: Dict[str, datetime]
 
-    meta = {
-        'collection': MongoDBSettings().mongo_patrons_collection
-    }
+    class Settings:
+        collection = MongoDBSettings().mongo_patrons_collection

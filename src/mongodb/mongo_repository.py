@@ -1,143 +1,119 @@
-# mongodb/mongo_repository.py
-
-from typing import Dict, Any, Optional, List
+from src.dal.dal import BaseRepository
+from src.mongodb.mongodb_models.library_item_model import LibraryItem
+from src.mongodb.mongodb_models.bills_model import Bill
+from src.mongodb.mongodb_models.patron_model import Patron
 from datetime import datetime
 
-from mongoengine import Q
 
-from src.dal.dal import LibraryItemRepository, PatronRepository, BillRepository
-from src.mongodb.mongodb_models.library_item_model import LibraryItemDocument
-from src.mongodb.mongodb_models.patron_model import PatronDocument
-from src.mongodb.mongodb_models.bills_model import BillDocument
+class MongoLibraryItemRepository(BaseRepository[LibraryItem]):
+    """
+    A MongoDB-specific repository for managing LibraryItemDocument operations.
+    """
 
+    def __init__(self):
+        super().__init__(LibraryItem)
 
-class MongoLibraryItemRepository(LibraryItemRepository):
-    def update_item_status(self, isbn: str, is_borrowed: bool) -> None:
+    async def update_item_status(self, isbn: str, is_borrowed: bool) -> None:
         """
-        Update the status of a library item identified by its ISBN.
+        Updates the borrowed status of a library item by ISBN.
 
-        Args:
-            isbn (str): The ISBN of the library item.
-            is_borrowed (bool): True if the item is borrowed, False if it is returned.
+        :param isbn: The ISBN of the library item.
+        :param is_borrowed: Boolean indicating whether the item is borrowed.
         """
-        item = LibraryItemDocument.objects(isbn=isbn).first()
+        item = await self.find_one({"isbn": isbn})
         if item:
-            item.update(set__is_borrowed=is_borrowed)
+            item.is_borrowed = is_borrowed
+            await self.update(item)
 
-    def insert_document(self, document: LibraryItemDocument) -> None:
+    async def is_item_borrowed(self, isbn: str) -> bool:
         """
-        Insert a library item document into the database.
+        Checks whether a library item is borrowed by its ISBN.
 
-        Args:
-            document (LibraryItemDocument): The document to insert.
+        :param isbn: The ISBN of the library item.
+        :return: True if the item is borrowed, False otherwise.
         """
-        document.save()
+        item = await self.find_one({"isbn": isbn})
+        return item.is_borrowed if item else False
 
-    def delete_document(self, query: Dict[str, Any]) -> None:
+
+class MongoPatronRepository(BaseRepository[Patron]):
+    """
+    A MongoDB-specific repository for managing PatronDocument operations.
+    Includes domain-specific operations like borrowing and returning items.
+    """
+
+    def __init__(self):
+        super().__init__(Patron)
+
+    async def borrow_item(self, patron_id: str, isbn: str, borrow_date: datetime) -> None:
         """
-        Delete a library item document from the database.
+        Adds an item to a patron's borrowed list by ISBN.
 
-        Args:
-            query (dict): The query to find the document to delete.
+        :param patron_id: The ID of the patron.
+        :param isbn: The ISBN of the item to be borrowed.
+        :param borrow_date: The date when the item was borrowed.
         """
-        LibraryItemDocument.objects(**query).delete()
+        patron = await self.find_one({"id": patron_id})
+        if patron:
+            patron.items[isbn] = borrow_date
+            await self.update(patron)
 
-    def item_exists(self, isbn: str) -> bool:
-        return LibraryItemDocument.objects(isbn=isbn).count() > 0
-
-    def is_item_borrowed(self, isbn: str) -> bool:
-        return LibraryItemDocument.objects(isbn=isbn).first().is_borrowed
-
-    def search_items(self, query: Dict[str, Optional[str]]) -> List[LibraryItemDocument]:
-        mongo_query = Q()
-        if 'title' in query and query['title']:
-            mongo_query &= Q(title__icontains=query['title'])
-        if 'isbn' in query and query['isbn']:
-            mongo_query &= Q(isbn=query['isbn'])
-        if 'author' in query and query['author']:
-            mongo_query &= Q(author__icontains=query['author'])
-
-        return list(LibraryItemDocument.objects(mongo_query))
-
-
-class MongoPatronRepository(PatronRepository):
-    def return_item(self, patron_id: str, isbn: str):
+    async def return_item(self, patron_id: str, isbn: str) -> None:
         """
-        Update the items associated with a library patron.
+        Removes an item from a patron's borrowed list by ISBN.
 
-        Args:
-            patron_id (str): The ID of the patron.
-            isbn (str): The ISBN of the item.
+        :param patron_id: The ID of the patron.
+        :param isbn: The ISBN of the item to be returned.
         """
-        patron = PatronDocument.objects(patron_id=patron_id).first()
-        patron.patron_items.pop(isbn, None)
-        patron.save()
+        patron = await self.find_one({"id": patron_id})
+        if patron:
+            patron.items.pop(isbn, None)
+            await self.update(patron)
 
-    def borrow_item(self, patron_id: str, isbn: str, borrow_date: Optional[datetime] = None):
+    async def patron_exists(self, patron_id: str) -> bool:
         """
-        Update the items associated with a library patron.
+        Checks whether a patron with the given ID exists.
 
-        Args:
-            patron_id (str): The ID of the patron.
-            isbn (str): The ISBN of the item.
-            borrow_date (Optional[datetime]): The date when the item is borrowed.
+        :param patron_id: The ID of the patron.
+        :return: True if the patron exists, False otherwise.
         """
+        return await self.exists({"id": patron_id})
 
-        patron = PatronDocument.objects(patron_id=patron_id).first()
-        patron.patron_items[isbn] = borrow_date
-        patron.save()
 
-    def insert_document(self, document: PatronDocument) -> None:
+class MongoBillRepository(BaseRepository[Bill]):
+    """
+    A MongoDB-specific repository for managing BillDocument operations.
+    """
+
+    def __init__(self):
+        super().__init__(Bill)
+
+    async def insert_bill(self, patron_id: str, amount: float) -> None:
         """
-        Insert a patron document into the database.
+        Inserts a new bill for a patron.
 
-        Args:
-            document (PatronDocument): The document to insert.
+        :param patron_id: The ID of the patron to whom the bill belongs.
+        :param amount: The amount of the bill.
         """
-        document.save()
+        bill = Bill(patron_id=patron_id, patron_bill_sum=amount)
+        await self.add(bill)
 
-    def delete_document(self, query: Dict[str, Any]) -> None:
+    async def update_bill(self, patron_id: str, amount: float) -> None:
         """
-        Delete a patron document from the database.
+        Updates the bill amount for a patron.
 
-        Args:
-            query (dict): The query to find the document to delete.
+        :param patron_id: The ID of the patron to whom the bill belongs.
+        :param amount: The updated bill amount.
         """
-        PatronDocument.objects(**query).delete()
-
-    def patron_exists(self, isbn: str) -> bool:
-        return LibraryItemDocument.objects(isbn=isbn).count() > 0
-
-
-class MongoBillRepository(BillRepository):
-    def insert_bill(self, patron_id: str, amount: float) -> None:
-        """
-        Insert a new bill for a patron.
-
-        Args:
-            patron_id (str): The ID of the patron.
-            amount (float): The amount of the bill.
-        """
-        bill = BillDocument(patron_id=patron_id, amount=amount)
-        bill.save()
-
-    def update_bill(self, patron_id: str, amount: float) -> None:
-        """
-        Update the bill for a patron.
-
-        Args:
-            patron_id (str): The ID of the patron.
-            amount (float): The new amount for the bill.
-        """
-        bill = BillDocument.objects(patron_id=patron_id).first()
+        bill = await self.find_one({"patron_id": patron_id})
         if bill:
-            bill.update(set__amount=amount)
+            bill.patron_bill_sum = amount
+            await self.update(bill)
 
-    def delete_bill(self, patron_id: str) -> None:
+    async def delete_bill(self, patron_id: str) -> None:
         """
-        Delete the bill for a patron.
+        Deletes a bill for a specific patron.
 
-        Args:
-            patron_id (str): The ID of the patron.
+        :param patron_id: The ID of the patron whose bill is to be deleted.
         """
-        BillDocument.objects(patron_id=patron_id).delete()
+        await self.remove({"patron_id": patron_id})

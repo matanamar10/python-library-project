@@ -1,11 +1,10 @@
-from mongoengine import Document, StringField, FloatField
-
+from beanie import Document
 from src.env_utils import MongoDBSettings
 
 
-class BillDocument(Document):
-    patron_id = StringField(required=True, unique=True, regex=r'^\d{9}$')
-    patron_bill_sum = FloatField(required=True)
-    meta = {
-        'collection': MongoDBSettings().mongo_bills_collection
-    }
+class Bill(Document):
+    patron_id: str
+    patron_bill_sum: float
+
+    class Settings:
+        collection = MongoDBSettings().mongo_bills_collection

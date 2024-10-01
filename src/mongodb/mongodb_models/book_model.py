@@ -1,7 +1,7 @@
-from mongoengine import StringField
+from pydantic import Field
 
-from src.mongodb.mongodb_models.library_item_model import LibraryItemDocument
+from src.mongodb.mongodb_models.library_item_model import LibraryItem
 
 
-class BookDocument(LibraryItemDocument):
-    author = StringField(required=True, max_length=60)
+class Book(LibraryItem):
+    author: str
